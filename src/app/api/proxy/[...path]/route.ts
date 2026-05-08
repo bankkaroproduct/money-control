@@ -4,11 +4,11 @@ const PARTNER_BASE_URL = 'https://platform.bankkaro.com/partner';
 // bk-api is the public-facing BankKaro API. It supports CORS and needs no auth.
 // The partner API key does not have permission for cardgenius/cards on platform.bankkaro.com,
 // so card listing routes are forwarded here instead.
-const BK_API_BASE = 'https://platform.bankkaro.com/partner';
+const BK_API_BASE = 'https://bk-api.bankkaro.com/sp/api';
 
 // Paths (relative to /api/proxy/) that should be routed to bk-api instead of the partner API.
 const BK_API_ROUTE_MAP: Record<string, string> = {
-  'cardgenius/cards': 'cards',
+  'cg-eligiblity': 'cg-eligiblity',
 };
 
 async function proxyRequest(
@@ -23,8 +23,14 @@ async function proxyRequest(
   const bkApiPath = BK_API_ROUTE_MAP[joinedPath];
   if (bkApiPath) {
     const targetUrl = `${BK_API_BASE}/${bkApiPath}${searchParams ? `?${searchParams}` : ''}`;
+    console.log(`[proxy] ${request.method} ${joinedPath} → ${targetUrl}`);
     try {
-      const response = await fetch(targetUrl, { method: 'GET' });
+      const fetchInit: RequestInit = { method: request.method };
+      if (request.method !== 'GET' && request.method !== 'HEAD') {
+        fetchInit.body = await request.text();
+        fetchInit.headers = { 'Content-Type': 'application/json' };
+      }
+      const response = await fetch(targetUrl, fetchInit);
       const data = await response.json().catch(() => ({}));
       return NextResponse.json(data, { status: response.status });
     } catch (error) {

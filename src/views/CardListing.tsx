@@ -1356,6 +1356,7 @@ const CardListing = () => {
       cardAlias={pendingApplyCard?.seo_card_alias || pendingApplyCard?.card_alias || getCardAlias(pendingApplyCard) || ''}
       cardName={pendingApplyCard?.name || pendingApplyCard?.card_name || ''}
       networkUrl={pendingApplyCard?.network_url || pendingApplyCard?.cg_network_url || pendingApplyCard?.ck_store_url || pendingApplyCard?.card_apply_link || ''}
+      initialValues={eligibilitySubmitted ? eligibility : undefined}
     />
 
 {/* Comparison Pill - visible on mobile & desktop */}

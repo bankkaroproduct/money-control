@@ -3,9 +3,8 @@ import { Search, Star, CreditCard, Users, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
-import NirajExpertPicks from "@/components/NirajExpertPicks";
+import ExpertPicks from "@/components/ExpertPicks";
 import AdvisorToolsGrid from "@/components/AdvisorToolsGrid";
-import InlineEligibilityChecker from "@/components/InlineEligibilityChecker";
 import Footer from "@/components/Footer";
 import { Link } from "@/components/Link";
 
@@ -16,7 +15,7 @@ const STATS = [
   { value: "4.9★", label: "User Rating", icon: Star },
 ];
 
-const NirajLanding = () => {
+const HomeLanding = () => {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -146,8 +145,7 @@ const NirajLanding = () => {
           </div>
         </section>
 
-        <InlineEligibilityChecker />
-        <NirajExpertPicks />
+<ExpertPicks />
         <AdvisorToolsGrid />
       </main>
 
@@ -156,4 +154,4 @@ const NirajLanding = () => {
   );
 };
 
-export default NirajLanding;
+export default HomeLanding;

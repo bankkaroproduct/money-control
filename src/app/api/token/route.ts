@@ -20,7 +20,6 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002',
-    'https://tide.bankkaro.com',
     'https://bankkaro.com',
     'https://bankexpert.bankkaro.com',
     'https://shubham-bank-expert.vercel.app',

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@/components/Link";
 import { brandConfig } from "@/config/brand.config";
+import { authManager } from "@/services/authManager";
 
 type DisplayCard = {
   name: string;
@@ -11,24 +12,32 @@ type DisplayCard = {
   reward: string;
   fee: string;
   image: string;
+  alias: string;
 };
 
 const PICKS: DisplayCard[] = [
-  { name: "HDFC Infinia", bank: "HDFC Bank", tag: "Premium", reward: "3.3% reward rate", fee: "₹12,500/yr", image: "/cards/hdfc-infinia.png" },
-  { name: "Axis Magnus", bank: "Axis Bank", tag: "Best All-Rounder", reward: "5% on partner spends", fee: "₹10,000/yr", image: "/cards/axis-magnus.png" },
-  { name: "SBI Elite", bank: "SBI Card", tag: "Value Champion", reward: "2x rewards on travel", fee: "₹4,999/yr", image: "/cards/sbi-elite.png" },
-  { name: "ICICI Sapphiro", bank: "ICICI Bank", tag: "Lifestyle", reward: "4x on dining & movies", fee: "₹6,500/yr", image: "/cards/icici-sapphiro.png" },
-  { name: "Amex Platinum", bank: "American Express", tag: "Luxury", reward: "Airport lounge access", fee: "₹60,000/yr", image: "/cards/amex-platinum.png" },
+  { name: "HDFC Infinia", bank: "HDFC Bank", tag: "Premium", reward: "3.3% reward rate", fee: "₹12,500/yr", image: "/cards/hdfc-infinia.png", alias: "" },
+  { name: "Axis Magnus", bank: "Axis Bank", tag: "Best All-Rounder", reward: "5% on partner spends", fee: "₹10,000/yr", image: "/cards/axis-magnus.png", alias: "" },
+  { name: "SBI Elite", bank: "SBI Card", tag: "Value Champion", reward: "2x rewards on travel", fee: "₹4,999/yr", image: "/cards/sbi-elite.png", alias: "" },
+  { name: "ICICI Sapphiro", bank: "ICICI Bank", tag: "Lifestyle", reward: "4x on dining & movies", fee: "₹6,500/yr", image: "/cards/icici-sapphiro.png", alias: "" },
+  { name: "Scapia", bank: "Federal Bank", tag: "Travel", reward: "Unlimited lounge access", fee: "Free", image: "/placeholder.svg", alias: "" },
 ];
 
-type ApiCard = { id: number; name: string; card_bg_image?: string; image?: string };
+type ApiCard = {
+  id: number;
+  name: string;
+  card_bg_image?: string;
+  image?: string;
+  seo_card_alias?: string;
+  card_alias?: string;
+};
 
 const NAME_MATCHERS: { keyword: RegExp; index: number }[] = [
   { keyword: /infinia/i, index: 0 },
   { keyword: /magnus/i, index: 1 },
   { keyword: /\bsbi\b.*elite|elite.*\bsbi\b/i, index: 2 },
   { keyword: /sapphiro/i, index: 3 },
-  { keyword: /amex.*platinum|american\s+express.*platinum/i, index: 4 },
+  { keyword: /scapia/i, index: 4 },
 ];
 
 function resolveFromApi(apiCards: ApiCard[]): DisplayCard[] {
@@ -37,20 +46,24 @@ function resolveFromApi(apiCards: ApiCard[]): DisplayCard[] {
     const match = NAME_MATCHERS.find((m) => m.keyword.test(apiCard.name));
     if (match) {
       const img = apiCard.card_bg_image || apiCard.image;
-      if (img) updated[match.index] = { ...updated[match.index], image: img };
+      const alias = apiCard.seo_card_alias || apiCard.card_alias || "";
+      updated[match.index] = {
+        ...updated[match.index],
+        ...(img ? { image: img } : {}),
+        ...(alias ? { alias } : {}),
+      };
     }
   }
   return updated;
 }
 
-const NirajExpertPicks = () => {
+const ExpertPicks = () => {
   const [cards, setCards] = useState<DisplayCard[]>(PICKS);
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    fetch("/api/proxy/cardgenius/cards", {
-      method: "GET",
-    })
+    authManager
+      .makeAuthenticatedRequest("/api/proxy/cardgenius/cards", { method: "GET" })
       .then((r) => r.json())
       .then((data) => {
         let apiCards: ApiCard[] = [];
@@ -93,7 +106,6 @@ const NirajExpertPicks = () => {
         </div>
 
         <div className="relative">
-          {/* Cards grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {visible.map((card, i) => (
               <div
@@ -143,25 +155,18 @@ const NirajExpertPicks = () => {
                   </p>
                 </div>
 
-                {/* Buttons */}
-                <div className="px-4 pb-4 pt-2 flex gap-2">
+                {/* View Details button */}
+                <div className="px-4 pb-4 pt-2">
                   <Link
-                    to="/cards"
-                    className="flex-1 text-center text-xs font-semibold py-2 rounded-lg transition-colors"
-                    style={{ backgroundColor: "#004E92", color: "#FFFFFF" }}
-                  >
-                    Apply Now
-                  </Link>
-                  <Link
-                    to="/cards"
-                    className="flex-1 text-center text-xs font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                    to={card.alias ? `/cards/${card.alias}` : "/cards"}
+                    className="w-full text-center text-xs font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
                     style={{
                       border: "1px solid #004E92",
                       color: "#004E92",
                       backgroundColor: "transparent",
                     }}
                   >
-                    Details <ExternalLink className="h-3 w-3" />
+                    View Details <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>
               </div>
@@ -193,4 +198,4 @@ const NirajExpertPicks = () => {
   );
 };
 
-export default NirajExpertPicks;
+export default ExpertPicks;

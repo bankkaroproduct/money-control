@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import NirajLanding from "@/views/NirajLanding";
+import HomeLanding from "@/views/HomeLanding";
 import { brandConfig } from "@/config/brand.config";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <NirajLanding />
+      <HomeLanding />
     </Suspense>
   );
 }

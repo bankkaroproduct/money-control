@@ -18,6 +18,7 @@ interface EligibilityDialogProps {
   networkUrl?: string;
   onEligibilityComplete?: () => void;
   onEligibilityReset?: () => void;
+  initialValues?: { pincode: string; inhandIncome: string; empStatus: string };
 }
 
 interface FormData {
@@ -39,12 +40,13 @@ export default function EligibilityDialog({
   cardName,
   networkUrl,
   onEligibilityComplete,
-  onEligibilityReset
+  onEligibilityReset,
+  initialValues
 }: EligibilityDialogProps) {
   const [formData, setFormData] = useState<FormData>({
-    pincode: '',
-    inhandIncome: '',
-    empStatus: ''
+    pincode: initialValues?.pincode || '',
+    inhandIncome: initialValues?.inhandIncome || '',
+    empStatus: (initialValues?.empStatus as FormData['empStatus']) || ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,16 +58,25 @@ export default function EligibilityDialog({
   const [lastResetTime, setLastResetTime] = useState(Date.now());
 
   useEffect(() => {
-    // Load prefilled data from session storage
+    if (!open) return;
+    // Prefer listing-page values when available, fall back to session storage
+    if (initialValues?.pincode || initialValues?.inhandIncome) {
+      setFormData({
+        pincode: initialValues.pincode || '',
+        inhandIncome: initialValues.inhandIncome || '',
+        empStatus: (initialValues.empStatus as FormData['empStatus']) || '',
+      });
+      return;
+    }
     const savedData = sessionStorage.getItem(`eligibility_${cardAlias}`);
     if (savedData) {
       try {
         setFormData(JSON.parse(savedData));
       } catch (e) {
-        // Ignore parse errors
+        // ignore
       }
     }
-  }, [cardAlias]);
+  }, [open, cardAlias, initialValues]);
 
   useEffect(() => {
     // Reset rate limit counter every minute

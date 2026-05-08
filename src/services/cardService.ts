@@ -110,14 +110,12 @@ export const cardService = {
     inhandIncome: string;
     empStatus: 'salaried' | 'self_employed';
   }) {
-    const response = await authManager.makeAuthenticatedRequest(
-      `${BASE_URL}/cardgenius/cards`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      }
-    );
+    const { cardAlias: _, ...eligibilityPayload } = params;
+    const response = await fetch(`${BASE_URL}/cg-eligiblity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(eligibilityPayload),
+    });
     return response.json();
   },
 };
