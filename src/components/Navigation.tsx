@@ -274,6 +274,7 @@ const Navigation = () => {
   const navLinks: MobileNavItem[] = useMemo(() => ([
     { label: 'Home', to: '/', action: () => analytics.trackMenuClick('Home') },
     { label: 'Discover', to: '/cards', action: () => analytics.trackMenuClick('Discover') },
+    { label: 'About', to: '/about', action: () => analytics.trackMenuClick('About') },
   ]), []);
 
   const toolLinks: MobileNavItem[] = useMemo(() => ([

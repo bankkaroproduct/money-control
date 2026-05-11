@@ -159,7 +159,7 @@ const ExpertPicks = () => {
                 <div className="px-4 pb-4 pt-2">
                   <Link
                     to={card.alias ? `/cards/${card.alias}` : "/cards"}
-                    className="w-full text-center text-xs font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                    className="w-full text-center text-sm font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-1"
                     style={{
                       border: "1px solid #004E92",
                       color: "#004E92",
@@ -177,19 +177,19 @@ const ExpertPicks = () => {
           <div className="flex justify-center gap-3 mt-8">
             <button
               onClick={prev}
-              className="h-9 w-9 rounded-full flex items-center justify-center transition-colors"
+              className="h-11 w-11 rounded-full flex items-center justify-center transition-colors"
               style={{ border: "1px solid #004E92", color: "#004E92", backgroundColor: "transparent" }}
               aria-label="Previous"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={next}
-              className="h-9 w-9 rounded-full flex items-center justify-center transition-colors"
+              className="h-11 w-11 rounded-full flex items-center justify-center transition-colors"
               style={{ backgroundColor: "#004E92", color: "white" }}
               aria-label="Next"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>

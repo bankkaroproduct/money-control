@@ -838,7 +838,7 @@ const CardListing = () => {
 
                     <CollapsibleContent>
                       <div className="p-3 sm:p-4 pt-0">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 items-end">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-end">
                           <div>
                             <Input
                               type="text"
@@ -1306,16 +1306,16 @@ const CardListing = () => {
     {/* Sticky Filter Button (Bottom) - Shows on scroll */}
     {showStickyFilter && (
       <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom duration-300 px-4 w-full">
-        <div className="bg-card/95 backdrop-blur-md border border-primary/40 rounded-full shadow-2xl px-4 py-2 flex items-center justify-center gap-3">
+        <div className="bg-card/95 backdrop-blur-md border border-primary/40 rounded-full shadow-2xl px-5 py-3 flex items-center justify-center gap-3">
           {/* Filters trigger */}
           <button
             onClick={() => document.getElementById('mobile-filter-trigger')?.click()}
-            className="flex items-center gap-2 text-foreground text-xs font-semibold"
+            className="flex items-center gap-2 text-foreground text-sm font-semibold h-11 px-1"
           >
             <Filter className="w-4 h-4" />
             <span>Filters</span>
             {(filters.category !== 'all' || filters.card_networks.length > 0 || filters.annualFees || eligibilitySubmitted) && (
-              <span className="ml-1 px-2 py-0.5 bg-[#F5F5F5] text-black text-[10px] rounded-full font-bold">
+              <span className="ml-1 px-2 py-0.5 bg-[#F5F5F5] text-black text-xs rounded-full font-bold">
                 {[filters.category !== 'all', filters.card_networks.length > 0, filters.annualFees, eligibilitySubmitted].filter(Boolean).length}
               </span>
             )}
@@ -1327,7 +1327,7 @@ const CardListing = () => {
               <span className="h-5 w-px bg-border" />
               <button
                 onClick={() => window.dispatchEvent(new Event('openComparison'))}
-                className="text-[#004E92] font-semibold text-xs"
+                className="text-[#004E92] font-semibold text-sm h-11 px-1"
               >
                 View Compare
               </button>

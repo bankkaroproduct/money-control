@@ -100,7 +100,7 @@ const Footer = () => {
           <p className="text-xs opacity-60 text-center sm:text-left">
             © {new Date().getFullYear()} Pouring Pounds India Pvt. Ltd. All rights reserved.
           </p>
-          <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs opacity-60">
+          <div className="flex items-center gap-4 sm:gap-5 text-xs sm:text-sm opacity-60">
             <a href="https://bankkaro.com/privacy-policy" target="_blank" className="hover:opacity-100 hover:text-white transition-all">Privacy Policy</a>
             <span className="hidden sm:inline">•</span>
             <a href="https://bankkaro.com/terms-conditions" target="_blank" className="hover:opacity-100 hover:text-white transition-all">Terms of Service</a>
