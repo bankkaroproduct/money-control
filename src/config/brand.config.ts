@@ -28,7 +28,7 @@ export const brandConfig: BrandConfig = {
   tagline: process.env.NEXT_PUBLIC_BRAND_TAGLINE || 'Find Your Perfect Credit Card',
   logo: process.env.NEXT_PUBLIC_BRAND_LOGO || '/bankexpert-logo.png',
   favicon: process.env.NEXT_PUBLIC_BRAND_FAVICON || '/bankexpert-logo.png',
-  email: process.env.NEXT_PUBLIC_BRAND_EMAIL || 'bankexpert@wwdc.in',
+  email: 'bankexpert@wwdc.in',
   analyticsId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '',
   headerBgColor: process.env.NEXT_PUBLIC_HEADER_BG_COLOR || '#004E92',
   colors: {
