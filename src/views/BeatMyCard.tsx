@@ -102,6 +102,13 @@ const questions: SpendingQuestion[] = [{
   max: 50000,
   step: 500
 }, {
+  field: 'offline_grocery',
+  question: 'How much do you spend on groceries at physical stores monthly?',
+  emoji: '🛒',
+  min: 0,
+  max: 50000,
+  step: 500
+}, {
   field: 'online_food_ordering',
   question: 'How much do you spend on food delivery apps in a month?',
   emoji: '🛵🍜',
@@ -179,6 +186,20 @@ const questions: SpendingQuestion[] = [{
   emoji: '🚗',
   min: 0,
   max: 50000,
+  step: 1000
+}, {
+  field: 'insurance_health_annual',
+  question: 'How much do you pay for health insurance annually?',
+  emoji: '🏥',
+  min: 0,
+  max: 100000,
+  step: 1000
+}, {
+  field: 'life_insurance',
+  question: 'How much do you pay for life insurance annually?',
+  emoji: '🛡️',
+  min: 0,
+  max: 200000,
   step: 1000
 }, {
   field: 'rent',
@@ -298,6 +319,7 @@ const BeatMyCard = () => {
         other_online_spends: responses.other_online_spends || 0,
         other_offline_spends: responses.other_offline_spends || 0,
         grocery_spends_online: responses.grocery_spends_online || 0,
+        offline_grocery: responses.offline_grocery || 0,
         online_food_ordering: responses.online_food_ordering || 0,
         fuel: responses.fuel || 0,
         dining_or_going_out: responses.dining_or_going_out || 0,
@@ -310,6 +332,8 @@ const BeatMyCard = () => {
         water_bills: responses.water_bills || 0,
 
         insurance_car_or_bike_annual: responses.insurance_car_or_bike_annual || 0,
+        insurance_health_annual: responses.insurance_health_annual || 0,
+        life_insurance: responses.life_insurance || 0,
         rent: responses.rent || 0,
         school_fees: responses.school_fees || 0
       };
@@ -463,8 +487,12 @@ const BeatMyCard = () => {
         emoji: '🏪'
       },
       grocery_spends_online: {
-        name: 'Groceries',
+        name: 'Groceries (Online)',
         emoji: '🥦'
+      },
+      offline_grocery: {
+        name: 'Groceries (Offline)',
+        emoji: '🛒'
       },
       online_food_ordering: {
         name: 'Food Delivery',
@@ -502,6 +530,14 @@ const BeatMyCard = () => {
       insurance_car_or_bike_annual: {
         name: 'Vehicle Insurance',
         emoji: '🚗'
+      },
+      insurance_health_annual: {
+        name: 'Health Insurance',
+        emoji: '🏥'
+      },
+      life_insurance: {
+        name: 'Life Insurance',
+        emoji: '🛡️'
       },
       rent: {
         name: 'House Rent',

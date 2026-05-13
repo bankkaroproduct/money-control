@@ -315,7 +315,7 @@ const HomeLanding = () => {
             </p>
 
             <p className="text-sm font-medium mb-8" style={{ color: "#004E92" }}>
-              ↓ Explore Shubham's Picks Below
+              ↓ Explore BankExpert's Picks Below
             </p>
 
             {/* Search bar */}
