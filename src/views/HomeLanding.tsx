@@ -56,23 +56,54 @@ function cleanBenefit(raw: string): string {
   return raw.trim().replace(/\s{2,}/g, " ").replace(/on\s*$/, "").replace(/\s+on\s*$/, "").trim();
 }
 
-function parseCards(data: any): CardItem[] {
-  let raw: any[] = [];
-  if (Array.isArray(data?.data?.cards)) raw = data.data.cards;
-  else if (Array.isArray(data?.data)) raw = data.data;
-  else if (Array.isArray(data)) raw = data;
+function parseRawCards(data: any): any[] {
+  if (Array.isArray(data?.data?.cards)) return data.data.cards;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data)) return data;
+  return [];
+}
 
-  return raw.slice(0, 9).map((c: any) => {
-    const alias = c.seo_card_alias || c.card_alias || "";
-    const name = c.name || c.card_name || "";
-    const bank = c.bank_name || c.bank || extractBank(name);
-    const image = c.card_bg_image || c.image || "";
-    const feeRaw = c.annual_fee || c.joining_fee_text || "";
-    const annual_fee = feeRaw === "0" || feeRaw === "Free" || feeRaw === "" ? "Free" : `₹${feeRaw}/yr`;
-    const benefits: string[] = Array.isArray(c.key_benefits) ? c.key_benefits : [];
-    const benefit = benefits.map(cleanBenefit).find((b) => b.length > 8) || "";
-    return { name, bank, alias, image, annual_fee, benefit };
+function toCardItem(c: any): CardItem {
+  const alias = c.seo_card_alias || c.card_alias || "";
+  const name = c.name || c.card_name || "";
+  const bank = c.bank_name || c.bank || extractBank(name);
+  const image = c.card_bg_image || c.image || "";
+  const feeRaw = c.annual_fee || c.joining_fee_text || "";
+  const annual_fee = feeRaw === "0" || feeRaw === "Free" || feeRaw === "" ? "Free" : `₹${feeRaw}/yr`;
+  const benefits: string[] = Array.isArray(c.key_benefits) ? c.key_benefits : [];
+  const benefit = benefits.map(cleanBenefit).find((b) => b.length > 8) || "";
+  return { name, bank, alias, image, annual_fee, benefit };
+}
+
+function curateCards(raw: any[], aliases: string[]): CardItem[] {
+  const byAlias = new Map<string, any>();
+  raw.forEach((c) => {
+    const a = c.seo_card_alias || c.card_alias || "";
+    if (a && !byAlias.has(a)) byAlias.set(a, c);
   });
+
+  const result: CardItem[] = [];
+  const used = new Set<string>();
+  for (const alias of aliases) {
+    if (byAlias.has(alias)) {
+      result.push(toCardItem(byAlias.get(alias)));
+      used.add(alias);
+    }
+  }
+
+  // Fill remaining slots with API order if curated cards weren't found
+  if (result.length < 9) {
+    for (const c of raw) {
+      if (result.length >= 9) break;
+      const a = c.seo_card_alias || c.card_alias || "";
+      if (!used.has(a)) {
+        result.push(toCardItem(c));
+        used.add(a);
+      }
+    }
+  }
+
+  return result.slice(0, 9);
 }
 
 // ── Stats ────────────────────────────────────────────────────────────────────
@@ -140,12 +171,60 @@ function SkeletonCard() {
   );
 }
 
+// ── Curated card aliases per tab (ordered) ───────────────────────────────────
+const CURATED_ALIASES: Record<TabKey, string[]> = {
+  picks: [
+    "hdfc-regalia-gold-credit-card",
+    "sbi-cashback-credit-card",
+    "axis-bank-magnus-credit-card",
+    "hdfc-millenia-credit-card",
+    "icici-amazon-pay-credit-card",
+    "axis-atlas-credit-card",
+    "idfc-first-wealth-credit-card",
+    "tata-neu-infinity-sbi-credit-card",
+    "axis-flipkart-credit-card",
+  ],
+  best: [
+    "hdfc-infinia-credit-card",
+    "axis-bank-magnus-credit-card",
+    "axis-atlas-credit-card",
+    "hdfc-diners-club-black",
+    "hdfc-regalia-gold-credit-card",
+    "sbi-aurum-credit-card",
+    "icici-emeralde-private-metal-credit-card",
+    "hdfc-marriott-bonvoy-credit-card",
+    "axis-bank-reserve-credit-card",
+  ],
+  beginner: [
+    "icici-amazon-pay-credit-card",
+    "idfc-first-select-credit-card",
+    "axis-neo-credit-card",
+    "scapia-credit-card",
+    "hdfc-pixel-play-credit-card",
+    "kiwi-klick-credit-card",
+    "kotak-811-dream-different-credit-card",
+    "rbl-bank-play-credit-card",
+    "idfc-first-classic-credit-card",
+  ],
+  cashback: [
+    "sbi-cashback-credit-card",
+    "hdfc-millenia-credit-card",
+    "icici-amazon-pay-credit-card",
+    "axis-flipkart-credit-card",
+    "axis-cashback-credit-card",
+    "hdfc-swiggy-credit-card",
+    "hdfc-pixel-play-credit-card",
+    "flipkart-sbi-credit-card",
+    "hdfc-tata-neu-plus-credit-card",
+  ],
+};
+
 // ── Tab config with fetch params ─────────────────────────────────────────────
 const TAB_CONFIG: Record<TabKey, { label: string; slug: string; free_cards: string; sort_by: string }> = {
-  picks:    { label: "Shubham's Picks", slug: "",                          free_cards: "",     sort_by: "priority" },
-  best:     { label: "Best Cards",      slug: "best-travel-credit-card",   free_cards: "",     sort_by: "priority" },
-  beginner: { label: "Beginner Cards",  slug: "",                          free_cards: "true", sort_by: "priority" },
-  cashback: { label: "Best Cashback",   slug: "best-shopping-credit-card", free_cards: "",     sort_by: "priority" },
+  picks:    { label: "BankExpert's Picks", slug: "",                          free_cards: "",     sort_by: "priority" },
+  best:     { label: "Best Cards",         slug: "best-travel-credit-card",   free_cards: "",     sort_by: "priority" },
+  beginner: { label: "Beginner Cards",     slug: "",                          free_cards: "true", sort_by: "priority" },
+  cashback: { label: "Best Cashback",      slug: "best-shopping-credit-card", free_cards: "",     sort_by: "priority" },
 };
 
 // ── Tabbed picks section ─────────────────────────────────────────────────────
@@ -170,7 +249,7 @@ function ShubhamPicks() {
     setCards([]);
 
     const config = TAB_CONFIG[tabKey];
-    const qs = new URLSearchParams({ sort_by: config.sort_by });
+    const qs = new URLSearchParams({ sort_by: config.sort_by, limit: "200" });
     if (config.slug) qs.set("slug", config.slug);
     if (config.free_cards) qs.set("free_cards", config.free_cards);
 
@@ -178,9 +257,10 @@ function ShubhamPicks() {
       .makeAuthenticatedRequest(`/api/proxy/cardgenius/cards?${qs}`, { method: "GET" })
       .then((r) => r.json())
       .then((data) => {
-        const parsed = parseCards(data);
-        cache.current[tabKey] = parsed;
-        setCards(parsed);
+        const raw = parseRawCards(data);
+        const curated = curateCards(raw, CURATED_ALIASES[tabKey]);
+        cache.current[tabKey] = curated;
+        setCards(curated);
       })
       .catch(() => {
         setError(`Failed to load ${TAB_CONFIG[tabKey].label}. Please try again.`);
