@@ -1,5 +1,5 @@
 "use client";
-import { Search, Star, CreditCard, Users, TrendingUp, ExternalLink } from "lucide-react";
+import { Search, Star, CreditCard, Users, TrendingUp } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
@@ -14,8 +14,9 @@ type CardItem = {
   bank: string;
   alias: string;
   image: string;
+  joining_fee: string;
   annual_fee: string;
-  benefit: string;
+  networks: string;
 };
 
 type TabKey = "picks" | "best" | "beginner" | "cashback";
@@ -52,9 +53,6 @@ function extractBank(cardName: string): string {
   return "Bank";
 }
 
-function cleanBenefit(raw: string): string {
-  return raw.trim().replace(/\s{2,}/g, " ").replace(/on\s*$/, "").replace(/\s+on\s*$/, "").trim();
-}
 
 function parseRawCards(data: any): any[] {
   if (Array.isArray(data?.data?.cards)) return data.data.cards;
@@ -63,16 +61,21 @@ function parseRawCards(data: any): any[] {
   return [];
 }
 
+function formatFee(raw: any): string {
+  const s = String(raw ?? "").trim();
+  if (!s || s === "0" || s.toLowerCase() === "free") return "Free";
+  return `₹${s}`;
+}
+
 function toCardItem(c: any): CardItem {
   const alias = c.seo_card_alias || c.card_alias || "";
   const name = c.name || c.card_name || "";
   const bank = c.bank_name || c.bank || extractBank(name);
   const image = c.card_bg_image || c.image || "";
-  const feeRaw = c.annual_fee || c.joining_fee_text || "";
-  const annual_fee = feeRaw === "0" || feeRaw === "Free" || feeRaw === "" ? "Free" : `₹${feeRaw}/yr`;
-  const benefits: string[] = Array.isArray(c.key_benefits) ? c.key_benefits : [];
-  const benefit = benefits.map(cleanBenefit).find((b) => b.length > 8) || "";
-  return { name, bank, alias, image, annual_fee, benefit };
+  const joining_fee = formatFee(c.joining_fee_text ?? c.joining_fee);
+  const annual_fee = formatFee(c.annual_fee_text ?? c.annual_fee);
+  const networks = c.card_type || "";
+  return { name, bank, alias, image, joining_fee, annual_fee, networks };
 }
 
 function curateCards(raw: any[], aliases: string[]): CardItem[] {
@@ -116,37 +119,63 @@ const STATS = [
 
 // ── Card component ───────────────────────────────────────────────────────────
 function CardTile({ card }: { card: CardItem }) {
+  const networkList = card.networks
+    ? card.networks.split(",").map((n) => n.trim()).filter(Boolean)
+    : [];
+
   return (
     <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
-      {/* Image */}
-      <div className="px-4 pt-4">
+      {/* Image — full width, flush to top */}
+      <div className="h-44 bg-gradient-to-br from-[#F5F5F5] to-[#EEF4FB] flex items-center justify-center overflow-hidden">
         <img
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="w-full h-36 object-cover rounded-lg bg-[#F5F5F5]"
+          className="max-h-full max-w-full object-contain"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
       </div>
 
       {/* Content */}
       <div className="px-4 pt-3 pb-4 flex flex-col flex-1">
-        <p className="text-xs text-gray-400 mb-0.5">{card.bank}</p>
-        <h3 className="text-sm font-semibold text-[#111] leading-snug line-clamp-2 mb-2">{card.name}</h3>
-
-        {card.benefit && (
-          <span className="inline-block self-start text-[11px] font-semibold bg-[#EEF4FF] text-[#004E92] px-3 py-1 rounded-full mb-3 line-clamp-1">
-            {card.benefit}
-          </span>
+        {/* Network badges */}
+        {networkList.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {networkList.map((n) => (
+              <span key={n} className="text-[10px] border border-gray-300 rounded-full px-2 py-0.5 text-gray-500">
+                {n === "AmericanExpress" ? "Amex" : n}
+              </span>
+            ))}
+          </div>
         )}
 
-        <div className="mt-auto flex items-center justify-between">
-          <span className="text-xs text-gray-400">{card.annual_fee}</span>
+        <h3 className="text-sm font-bold text-[#111] leading-snug line-clamp-2 mb-3">{card.name}</h3>
+
+        {/* Fee grid */}
+        <div className="grid grid-cols-2 gap-2 bg-[#F9FAFB] rounded-lg px-3 py-2 mb-3">
+          <div>
+            <p className="text-[10px] text-gray-400 mb-0.5">Joining</p>
+            <p className="text-sm font-semibold text-[#111]">{card.joining_fee}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-400 mb-0.5">Annual</p>
+            <p className="text-sm font-semibold text-[#111]">{card.annual_fee}</p>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-auto flex gap-2">
           <Link
             to={card.alias ? `/cards/${card.alias}` : "/cards"}
-            className="inline-flex items-center gap-1 text-xs font-semibold px-4 py-2 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#004E92] hover:text-white transition-colors"
+            className="flex-1 text-center text-xs font-semibold py-2.5 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#EEF4FF] transition-colors"
           >
-            View Details <ExternalLink className="h-3 w-3" />
+            Details
+          </Link>
+          <Link
+            to={card.alias ? `/cards/${card.alias}` : "/cards"}
+            className="flex-1 text-center text-xs font-semibold py-2.5 rounded-lg bg-[#004E92] text-white hover:bg-[#003A6E] transition-colors"
+          >
+            Apply Now
           </Link>
         </div>
       </div>
@@ -158,14 +187,15 @@ function CardTile({ card }: { card: CardItem }) {
 function SkeletonCard() {
   return (
     <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden animate-pulse">
-      <div className="px-4 pt-4">
-        <div className="w-full h-36 rounded-lg bg-gray-100" />
-      </div>
+      <div className="h-44 bg-gray-100" />
       <div className="px-4 pt-3 pb-4 space-y-2">
-        <div className="h-3 bg-gray-100 rounded w-1/3" />
+        <div className="h-3 bg-gray-100 rounded w-1/4" />
         <div className="h-4 bg-gray-100 rounded w-3/4" />
-        <div className="h-6 bg-gray-100 rounded-full w-1/2" />
-        <div className="h-8 bg-gray-100 rounded w-1/3 ml-auto mt-2" />
+        <div className="h-12 bg-gray-100 rounded-lg mt-2" />
+        <div className="flex gap-2 mt-2">
+          <div className="h-9 bg-gray-100 rounded-lg flex-1" />
+          <div className="h-9 bg-gray-100 rounded-lg flex-1" />
+        </div>
       </div>
     </div>
   );
