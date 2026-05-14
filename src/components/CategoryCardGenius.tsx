@@ -381,6 +381,9 @@ useEffect(() => {
         water_bills: 0,
 
         insurance_car_or_bike_annual: 0,
+        insurance_health_annual: 0,
+        life_insurance: 0,
+        offline_grocery: 0,
         rent: 0,
         school_fees: 0,
         ...responses

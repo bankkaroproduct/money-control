@@ -202,10 +202,10 @@ function ShubhamPicks() {
         {/* Section header */}
         <div className="mb-8">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-gray-400 mb-1">
-            Curated by Shubham Dubey
+            Curated by BankExpert
           </p>
           <h2 className="text-2xl md:text-3xl font-extrabold text-[#004E92]">
-            Explore Shubham's Picks
+            Explore BankExpert's Picks
           </h2>
         </div>
 

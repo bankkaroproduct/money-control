@@ -43,14 +43,17 @@ export function ComparePanel({ open, onOpenChange, preSelectedCard }: ComparePan
   useEffect(() => {
     if (!open || allCards.length > 0) return;
     cardService.getCardListing({ slug: '', banks_ids: [], card_networks: [], annualFees: '', credit_score: '', sort_by: '', free_cards: '', eligiblityPayload: {}, cardGeniusPayload: [] })
-      .then(response => setAllCards(response.data?.cards || response.data?.data || []))
+      .then(response => {
+        const cards = response.data?.cards || response.data?.data || response.data || [];
+        setAllCards(Array.isArray(cards) ? cards : []);
+      })
       .catch(console.error);
   }, [open, allCards.length]);
 
   useEffect(() => {
     [debouncedQuery0, debouncedQuery1, debouncedQuery2].forEach((query, idx) => {
       if (query?.length >= 2) {
-        setSearchResults(prev => { const newResults = [...prev]; newResults[idx] = allCards.filter((card: any) => card.name.toLowerCase().includes(query.toLowerCase())).slice(0, 5); return newResults; });
+        setSearchResults(prev => { const newResults = [...prev]; newResults[idx] = allCards.filter((card: any) => (card.name || card.card_name || '').toLowerCase().includes(query.toLowerCase())).slice(0, 5); return newResults; });
       } else {
         setSearchResults(prev => { const newResults = [...prev]; newResults[idx] = []; return newResults; });
       }
@@ -296,7 +299,7 @@ export function ComparePanel({ open, onOpenChange, preSelectedCard }: ComparePan
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
         <DialogContent className="max-w-[98vw] sm:max-w-[95vw] h-[92vh] sm:h-[90vh] p-0">
           <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 border-b">
             <DialogTitle className="text-xl sm:text-2xl font-bold">Compare Credit Cards</DialogTitle>
