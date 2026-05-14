@@ -83,9 +83,7 @@ const CardListing = () => {
   const pathname = usePathname();
   const [cards, setCards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || "");
-  const urlSearchQuery = searchParams.get('q') || "";
-  useEffect(() => { setSearchQuery(urlSearchQuery); }, [urlSearchQuery]); // sync on client-side navigation
+  const [searchQuery, setSearchQuery] = useState("");
   const [displayCount, setDisplayCount] = useState(12);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
