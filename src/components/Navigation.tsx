@@ -216,6 +216,31 @@ const MobileMenuOverlay = ({
             >
               Blogs
             </Link>
+
+            {/* Socials Section */}
+            <div className="space-y-3 pt-2">
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 px-1">
+                Socials
+              </p>
+              <div className="space-y-2">
+                {[
+                  { label: "YouTube", href: "https://www.youtube.com/@bankexpert" },
+                  { label: "Instagram", href: "https://www.instagram.com/bank.experts/" },
+                  { label: "Facebook", href: "https://www.facebook.com/people/Bank-Expert/61556117044087/#" },
+                ].map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 font-bold text-slate-900 dark:text-slate-100 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                    onClick={onClose}
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
@@ -354,6 +379,25 @@ const Navigation = () => {
           >
             Blogs
           </NavLink>
+
+          {/* Socials Dropdown */}
+          <div className="relative group">
+            <button className="text-white/90 hover:text-white transition-colors font-medium flex items-center gap-1">
+              Socials
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute top-full right-0 mt-2 w-44 bg-background border border-border rounded-2xl shadow-xl py-2 z-[100]">
+              <a href="https://www.youtube.com/@bankexpert" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+                YouTube
+              </a>
+              <a href="https://www.instagram.com/bank.experts/" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+                Instagram
+              </a>
+              <a href="https://www.facebook.com/people/Bank-Expert/61556117044087/#" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+                Facebook
+              </a>
+            </div>
+          </div>
 
         </div>
 

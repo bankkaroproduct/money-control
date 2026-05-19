@@ -151,31 +151,13 @@ function CardTile({ card }: { card: CardItem }) {
 
         <h3 className="text-sm font-bold text-[#111] leading-snug line-clamp-2 mb-3">{card.name}</h3>
 
-        {/* Fee grid */}
-        <div className="grid grid-cols-2 gap-2 bg-[#F9FAFB] rounded-lg px-3 py-2 mb-3">
-          <div>
-            <p className="text-[10px] text-gray-400 mb-0.5">Joining</p>
-            <p className="text-sm font-semibold text-[#111]">{card.joining_fee}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-gray-400 mb-0.5">Annual</p>
-            <p className="text-sm font-semibold text-[#111]">{card.annual_fee}</p>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="mt-auto flex gap-2">
+        {/* Button */}
+        <div className="mt-auto">
           <Link
             to={card.alias ? `/cards/${card.alias}` : "/cards"}
-            className="flex-1 text-center text-xs font-semibold py-2.5 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#EEF4FF] transition-colors"
+            className="block w-full text-center text-xs font-semibold py-2.5 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#EEF4FF] transition-colors"
           >
             Details
-          </Link>
-          <Link
-            to={card.alias ? `/cards/${card.alias}` : "/cards"}
-            className="flex-1 text-center text-xs font-semibold py-2.5 rounded-lg bg-[#004E92] text-white hover:bg-[#003A6E] transition-colors"
-          >
-            Apply Now
           </Link>
         </div>
       </div>
