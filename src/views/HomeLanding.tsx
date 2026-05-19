@@ -126,12 +126,12 @@ function CardTile({ card }: { card: CardItem }) {
   return (
     <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
       {/* Image — full width, flush to top */}
-      <div className="h-44 bg-gradient-to-br from-[#F5F5F5] to-[#EEF4FB] flex items-center justify-center overflow-hidden">
+      <div className="h-44 bg-[#FFF5E6] flex items-center justify-center overflow-hidden">
         <img
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="max-h-full max-w-full object-contain"
+          className="w-full h-full object-contain scale-110"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
       </div>

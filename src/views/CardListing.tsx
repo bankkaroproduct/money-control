@@ -1128,7 +1128,7 @@ const CardListing = () => {
               </div> : <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 pb-6">
                   {filteredCards.slice(0, displayCount).map((card, index) => <div key={card.id || index} className="card-item bg-card rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all hover:scale-[1.02] lg:hover:-translate-y-2 flex flex-col h-full active:scale-[0.98]">
-                    <div className="card-image-container relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-[#F5F5F5] to-[#EEF4FB] flex items-center justify-center p-3 sm:p-4 flex-shrink-0">
+                    <div className="card-image-container relative h-40 sm:h-44 md:h-48 bg-[#FFF5E6] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {/* Compare Toggle Icon - Top Right */}
                       <div className="absolute top-3 right-3 z-20">
                         <CompareToggleIcon card={card} />
@@ -1177,7 +1177,7 @@ const CardListing = () => {
                         return !saving && isJoiningFree && isAnnualFree && <Badge className="absolute bottom-3 right-3 bg-[#F5F5F5] text-black z-10">LTF</Badge>;
                       })()}
 
-                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="max-h-full max-w-full object-contain" onError={e => {
+                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="w-full h-full object-contain scale-110" onError={e => {
                         e.currentTarget.src = '/placeholder.svg';
                       }} />
                     </div>
