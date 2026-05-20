@@ -30,12 +30,12 @@ export function ComparePill() {
   return (
     <>
       {/* Hide the visual pill on small screens; keep panel logic available for mobile triggers */}
-      <div 
+      <div
         className={cn(
           "hidden lg:block",
           // Desktop: dock to bottom-right
           "fixed right-8 bottom-8 z-[60] w-[340px]",
-          isVisible ? "animate-slide-in-right" : "opacity-0 pointer-events-none"
+          isVisible && !isPanelOpen ? "animate-slide-in-right" : "opacity-0 pointer-events-none"
         )}
       >
         <div className="bg-gradient-to-r from-[#0B7A8A] to-[#E0F7F9] rounded-2xl shadow-2xl px-4 py-3 backdrop-blur-md border border-[#0B7A8A]/25">
