@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,19 @@ import { Loader2 } from 'lucide-react';
 import { cardService } from '@/services/cardService';
 import { toast } from 'sonner';
 import EligibilityResultDialog from './EligibilityResultDialog';
+import {
+  trackEligibilityModalOpened,
+  trackEligibilityModalPincodeFilled,
+  trackEligibilityModalIncomeFilled,
+  trackEligibilityModalEmploymentSelected,
+  trackEligibilityModalDetailsFilled,
+  trackEligibilityModalCheckClicked,
+  trackEligibilityModalCancelClicked,
+  trackEligibilityModalClosed,
+  trackEligibilityModalSubmitted,
+  trackEligibilityModalPassed,
+  trackEligibilityModalFailed,
+} from '@/services/journeyTrack';
 
 interface EligibilityDialogProps {
   open: boolean;
@@ -56,6 +69,35 @@ export default function EligibilityDialog({
   // Rate limiting: max 3 checks per minute
   const [checkCount, setCheckCount] = useState(0);
   const [lastResetTime, setLastResetTime] = useState(Date.now());
+
+  // Guard so the modal-opened event fires once per open transition
+  const hasTrackedOpen = useRef(false);
+  // Flag so the X/close handler doesn't double-track when Cancel triggered the close
+  const cancelClickedRef = useRef(false);
+
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      if (cancelClickedRef.current) {
+        // Cancel button already tracked the close
+        cancelClickedRef.current = false;
+      } else {
+        // X icon / Esc / overlay close
+        trackEligibilityModalClosed(cardAlias);
+      }
+    }
+    onOpenChange(nextOpen);
+  };
+
+  useEffect(() => {
+    if (open) {
+      if (!hasTrackedOpen.current) {
+        hasTrackedOpen.current = true;
+        trackEligibilityModalOpened(cardAlias, cardName, undefined);
+      }
+    } else {
+      hasTrackedOpen.current = false;
+    }
+  }, [open, cardAlias, cardName]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,9 +161,20 @@ export default function EligibilityDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check ("Check" submit button) clicked
+    trackEligibilityModalCheckClicked(cardAlias);
+
     if (!validateForm()) {
       return;
     }
+
+    // All three fields validated as filled
+    trackEligibilityModalDetailsFilled(
+      formData.pincode,
+      formData.inhandIncome,
+      formData.empStatus,
+      cardAlias
+    );
 
     setIsSubmitting(true);
 
@@ -173,6 +226,23 @@ export default function EligibilityDialog({
         });
       }
 
+      const eligible = matchedFromArray || matchedSingle;
+
+      // Submitted: eligibility computation completed
+      trackEligibilityModalSubmitted(
+        cardAlias,
+        formData.pincode,
+        formData.inhandIncome,
+        formData.empStatus,
+        eligible
+      );
+
+      if (eligible) {
+        trackEligibilityModalPassed(cardAlias);
+      } else {
+        trackEligibilityModalFailed(cardAlias, 'card_not_matched');
+      }
+
       setEligibilityResult(response);
       setShowResult(true);
       onEligibilityComplete?.();
@@ -221,7 +291,7 @@ export default function EligibilityDialog({
 
   return (
     <>
-      <Dialog open={open && !showResult} onOpenChange={onOpenChange}>
+      <Dialog open={open && !showResult} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="sm:max-w-[500px]" aria-labelledby="eligibility-dialog-title">
           <DialogHeader>
             <DialogTitle id="eligibility-dialog-title">Quick Eligibility Check - No Docs</DialogTitle>
@@ -239,6 +309,9 @@ export default function EligibilityDialog({
                 placeholder="Enter your 6-digit pincode"
                 value={formData.pincode}
                 onChange={(e) => handleInputChange('pincode', e.target.value.replace(/\D/g, ''))}
+                onBlur={(e) => {
+                  if (e.target.value) trackEligibilityModalPincodeFilled(e.target.value, cardAlias);
+                }}
                 aria-invalid={!!errors.pincode}
                 aria-describedby={errors.pincode ? 'pincode-error' : undefined}
                 disabled={isSubmitting}
@@ -260,6 +333,9 @@ export default function EligibilityDialog({
                 placeholder="e.g. 50,000"
                 value={formData.inhandIncome}
                 onChange={(e) => handleIncomeChange(e.target.value)}
+                onBlur={(e) => {
+                  if (e.target.value) trackEligibilityModalIncomeFilled(e.target.value, cardAlias);
+                }}
                 aria-invalid={!!errors.inhandIncome}
                 aria-describedby={errors.inhandIncome ? 'income-error' : undefined}
                 disabled={isSubmitting}
@@ -276,7 +352,10 @@ export default function EligibilityDialog({
               <Label htmlFor="employment">Employment Status</Label>
               <RadioGroup
                 value={formData.empStatus}
-                onValueChange={(value) => handleInputChange('empStatus', value)}
+                onValueChange={(value) => {
+                  handleInputChange('empStatus', value);
+                  trackEligibilityModalEmploymentSelected(value, cardAlias);
+                }}
                 disabled={isSubmitting}
                 aria-invalid={!!errors.empStatus}
               >
@@ -310,7 +389,11 @@ export default function EligibilityDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  cancelClickedRef.current = true;
+                  trackEligibilityModalCancelClicked(cardAlias);
+                  onOpenChange(false);
+                }}
                 disabled={isSubmitting}
                 className="flex-1"
               >

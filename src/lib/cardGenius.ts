@@ -41,6 +41,8 @@ export interface CardGeniusResult {
   minimum_spend?: string | number;
   network_url?: string;
   card_type?: string;
+  sourceable?: boolean;
+  invite_only?: boolean;
 }
 
 interface EnrichOptions {
@@ -183,6 +185,10 @@ export async function enrichCardGeniusResults({
           rating: cardDetails?.rating || saving?.rating || "",
           network_url: cardDetails?.network_url || saving?.network_url || cardDetails?.card_apply_link || saving?.card_apply_link || "",
           card_type: cardDetails?.card_type || saving?.card_type,
+          // Status fields — default sourceable=true / invite_only=false when absent
+          // so missing data never false-flags a card as discontinued/invite-only.
+          sourceable: cardDetails?.sourceable ?? saving?.sourceable ?? true,
+          invite_only: cardDetails?.invite_only ?? saving?.invite_only ?? false,
         } as CardGeniusResult;
       } catch (error) {
         console.error("Error enriching card result:", error);

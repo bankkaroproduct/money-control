@@ -15,6 +15,37 @@ import { CompareToggleIcon } from "@/components/comparison/CompareToggleIcon";
 import { ComparePill } from "@/components/comparison/ComparePill";
 import { useComparison } from "@/contexts/ComparisonContext";
 import { redirectToCardApplication } from "@/utils/redirectHandler";
+import {
+  trackListingApplyNowClicked,
+  trackDiscoverPageView,
+  trackDiscoverSearchBarFocused,
+  trackDiscoverSearchQueryTyped,
+  trackDiscoverSearchSubmitted,
+  trackEligibilitySectionViewed,
+  trackEligibilityPincodeFilled,
+  trackEligibilityIncomeFilled,
+  trackEligibilityEmploymentSelected,
+  trackEligibilityDetailsFilled,
+  trackEligibilityCheckClicked,
+  trackEligibilityChecked,
+  trackFilterPanelViewed,
+  trackFilterCategorySelected,
+  trackFilterFeeRangeOpened,
+  trackFilterFeeRangeSelected,
+  trackFilterNetworkOpened,
+  trackFilterNetworkSelected,
+  trackListingFiltersSelected,
+  trackFiltersCleared,
+  trackListingClearAllFilters,
+  trackListingPageView,
+  trackCardClicked,
+  trackCardDetailsClicked,
+  trackListingLoadMoreClicked,
+  trackCompareCardAdded,
+  trackCompareCardRemoved,
+  trackComparePanelViewed,
+  trackCompareNowClicked,
+} from "@/services/journeyTrack";
 import EligibilityDialog from "@/components/EligibilityDialog";
 import { feeCalc } from "@/lib/feeUtils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
@@ -25,6 +56,7 @@ import { ChevronDown } from "lucide-react";
 import confetti from 'canvas-confetti';
 import { toast } from "sonner";
 import { getCardAlias, getCardKey } from "@/utils/cardAlias";
+import { getCardStatus, isApplyDisabled, CARD_STATUS_LABEL } from "@/utils/cardStatus";
 
 /**
  * Frontend corrections for card_type values that are wrong in the backend data.
@@ -103,7 +135,7 @@ const CardListing = () => {
   const cardsRef = useRef<HTMLDivElement | null>(null);
 
   // Comparison context (for mobile "View Compare" action)
-  const { selectedCards } = useComparison();
+  const { selectedCards, isSelected } = useComparison();
 
   // Get category from URL params, default to "all"
   const initialCategory = normalizeCategory(searchParams.get('category'));
@@ -148,6 +180,57 @@ const CardListing = () => {
       abortControllerRef.current?.abort();
     };
   }, []);
+
+  // Journey: Discover page view on mount
+  useEffect(() => {
+    trackDiscoverPageView();
+  }, []);
+
+  // Journey: fire section-viewed events once via IntersectionObserver
+  const eligibilityViewedRef = useRef(false);
+  const filterPanelViewedRef = useRef(false);
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    if (eligibilityRef.current) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !eligibilityViewedRef.current) {
+            eligibilityViewedRef.current = true;
+            trackEligibilitySectionViewed();
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(eligibilityRef.current);
+      observers.push(obs);
+    }
+
+    if (filtersRef.current) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !filterPanelViewedRef.current) {
+            filterPanelViewedRef.current = true;
+            trackFilterPanelViewed();
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(filtersRef.current);
+      observers.push(obs);
+    }
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [loading]);
+
+  // Journey: listing page view once cards are loaded and shown
+  const listingViewedRef = useRef(false);
+  useEffect(() => {
+    if (!loading && cards.length > 0 && !listingViewedRef.current) {
+      listingViewedRef.current = true;
+      trackListingPageView(cards.length, Math.min(displayCount, filteredCards.length));
+    }
+  }, [loading, cards.length]);
 
   // Scroll listener for sticky elements
   useEffect(() => {
@@ -302,6 +385,7 @@ const CardListing = () => {
     if (searchQuery) {
       analytics.trackSearch(searchQuery);
     }
+    trackDiscoverSearchSubmitted(searchQuery);
     setDisplayCount(12);
   };
 
@@ -383,6 +467,7 @@ const CardListing = () => {
     return base;
   }, [sortedCards, searchQuery, eligibilitySubmitted, eligibleCardAliases, filters.category, cardSavings]);
   const loadMore = () => {
+    trackListingLoadMoreClicked();
     setIsLoadingMore(true);
     setTimeout(() => {
       setDisplayCount(prev => prev + 12);
@@ -400,8 +485,10 @@ const CardListing = () => {
   };
 
   const handleFilterChange = (filterType: string, value: string | boolean) => {
+    trackListingFiltersSelected(filterType, String(value));
     if (filterType === 'category' && typeof value === 'string') {
       const normalized = normalizeCategory(value);
+      trackFilterCategorySelected(normalized);
       setFilters((prev: any) => ({
         ...prev,
         category: normalized
@@ -409,6 +496,10 @@ const CardListing = () => {
       syncCategoryParam(normalized);
       setDisplayCount(12);
       return;
+    }
+
+    if (filterType === 'annualFees') {
+      trackFilterFeeRangeSelected(String(value));
     }
 
     analytics.trackFilterChange(filterType, String(value));
@@ -427,6 +518,8 @@ const CardListing = () => {
     });
   }, [searchParams]);
   const clearFilters = () => {
+    trackFiltersCleared();
+    trackListingClearAllFilters();
     syncCategoryParam('all');
     setFilters({
       banks_ids: [],
@@ -453,6 +546,8 @@ const CardListing = () => {
     fetchCards();
   };
   const handleEligibilitySubmit = async () => {
+    trackEligibilityCheckClicked();
+    trackEligibilityDetailsFilled(eligibility.pincode, eligibility.inhandIncome, eligibility.empStatus);
     // Validate inputs
     if (!eligibility.pincode || eligibility.pincode.length !== 6) {
       toast.error("Please enter a valid 6-digit pincode");
@@ -486,6 +581,7 @@ const CardListing = () => {
           .filter(Boolean);
 
         setEligibleCardAliases(aliases);
+        trackEligibilityChecked(eligibility.pincode, eligibility.inhandIncome, eligibility.empStatus, aliases.length);
         setEligibilitySubmitted(true);
         setEligibilityOpen(false);
 
@@ -618,10 +714,11 @@ const CardListing = () => {
       toast.error("Failed to calculate savings. Please try again.");
     }
   };
-  const handleApplyClick = (card: any) => {
+  const handleApplyClick = async (card: any) => {
     analytics.trackCardAction('Apply Now', card.name);
+    trackListingApplyNowClicked(card.seo_card_alias);
     if (applyEligibilityDone) {
-      redirectToCardApplication(card);
+      await redirectToCardApplication(card);
       return;
     }
     setPendingApplyCard(card);
@@ -673,7 +770,7 @@ const CardListing = () => {
     </Collapsible>
 
     {/* Annual Fee Range - Collapsed by default */}
-    <Collapsible defaultOpen={false}>
+    <Collapsible defaultOpen={false} onOpenChange={(open) => { if (open) trackFilterFeeRangeOpened(); }}>
       <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 hover:bg-muted/30 rounded-lg transition-colors touch-target">
         <h3 className="font-semibold">Annual Fee Range</h3>
         <ChevronDown className="w-4 h-4 transition-transform ui-expanded:rotate-180" />
@@ -733,7 +830,7 @@ const CardListing = () => {
        </Collapsible> */}
 
     {/* Card Network - Collapsed by default */}
-    <Collapsible defaultOpen={false}>
+    <Collapsible defaultOpen={false} onOpenChange={(open) => { if (open) trackFilterNetworkOpened(); }}>
       <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 hover:bg-muted/30 rounded-lg transition-colors text-left font-semibold touch-target">
         <h3 className="font-semibold">Card Network</h3>
         <ChevronDown className="w-4 h-4 transition-transform ui-expanded:rotate-180" />
@@ -741,6 +838,10 @@ const CardListing = () => {
       <CollapsibleContent className="pt-2 space-y-2 pl-1">
         {['VISA', 'Mastercard', 'RuPay', 'AmericanExpress'].map(network => <label key={network} className="filter-option flex items-center gap-3 cursor-pointer px-3 py-3 transition-all touch-target">
           <input type="checkbox" className="accent-[#004E92] w-5 h-5" checked={filters.card_networks.includes(network)} onChange={e => {
+            if (e.target.checked) {
+              trackFilterNetworkSelected(network);
+              trackListingFiltersSelected('card_networks', network);
+            }
             setFilters((prev: any) => ({
               ...prev,
               card_networks: e.target.checked ? [...prev.card_networks, network] : prev.card_networks.filter((n: string) => n !== network)
@@ -773,7 +874,11 @@ const CardListing = () => {
                 type="text"
                 placeholder="Search by card name..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => trackDiscoverSearchBarFocused()}
+                onChange={e => {
+                  setSearchQuery(e.target.value);
+                  trackDiscoverSearchQueryTyped(e.target.value);
+                }}
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
                 className="hero-card-listing-input pl-10 sm:pl-12 pr-10 sm:pr-12 h-12 sm:h-14 text-sm sm:text-base md:text-lg rounded-xl touch-target"
               />
@@ -850,6 +955,7 @@ const CardListing = () => {
                                 ...prev,
                                 pincode: e.target.value.replace(/\D/g, '')
                               }))}
+                              onBlur={e => trackEligibilityPincodeFilled(e.target.value)}
                               className="h-11 text-sm rounded-lg bg-white dark:bg-background"
                             />
                           </div>
@@ -862,14 +968,18 @@ const CardListing = () => {
                                 ...prev,
                                 inhandIncome: e.target.value
                               }))}
+                              onBlur={e => trackEligibilityIncomeFilled(e.target.value)}
                               className="h-11 text-sm rounded-lg bg-white dark:bg-background"
                             />
                           </div>
                           <div>
-                            <Select value={eligibility.empStatus} onValueChange={value => setEligibility(prev => ({
-                              ...prev,
-                              empStatus: value
-                            }))}>
+                            <Select value={eligibility.empStatus} onValueChange={value => {
+                              setEligibility(prev => ({
+                                ...prev,
+                                empStatus: value
+                              }));
+                              trackEligibilityEmploymentSelected(value);
+                            }}>
                               <SelectTrigger className="h-11 text-sm rounded-lg bg-white dark:bg-background">
                                 <SelectValue placeholder="Employment" />
                               </SelectTrigger>
@@ -909,6 +1019,7 @@ const CardListing = () => {
                         ...prev,
                         pincode: e.target.value.replace(/\D/g, '')
                       }))}
+                      onBlur={e => trackEligibilityPincodeFilled(e.target.value)}
                       className="h-12"
                     />
                   </div>
@@ -922,15 +1033,19 @@ const CardListing = () => {
                         ...prev,
                         inhandIncome: e.target.value
                       }))}
+                      onBlur={e => trackEligibilityIncomeFilled(e.target.value)}
                       className="h-12"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Employment Status</label>
-                    <Select value={eligibility.empStatus} onValueChange={value => setEligibility(prev => ({
-                      ...prev,
-                      empStatus: value
-                    }))}>
+                    <Select value={eligibility.empStatus} onValueChange={value => {
+                      setEligibility(prev => ({
+                        ...prev,
+                        empStatus: value
+                      }));
+                      trackEligibilityEmploymentSelected(value);
+                    }}>
                       <SelectTrigger className="h-12">
                         <SelectValue />
                       </SelectTrigger>
@@ -1130,7 +1245,14 @@ const CardListing = () => {
                   {filteredCards.slice(0, displayCount).map((card, index) => <div key={card.id || index} className="card-item bg-card rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all hover:scale-[1.02] lg:hover:-translate-y-2 flex flex-col h-full active:scale-[0.98]">
                     <div className="card-image-container relative h-40 sm:h-44 md:h-48 bg-[#FFF5E6] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {/* Compare Toggle Icon - Top Right */}
-                      <div className="absolute top-3 right-3 z-20">
+                      <div className="absolute top-3 right-3 z-20" onClickCapture={() => {
+                        const cardId = getCardKey(card);
+                        if (isSelected(cardId)) {
+                          trackCompareCardRemoved(cardId, card.name);
+                        } else {
+                          trackCompareCardAdded(cardId, card.name, 'listing');
+                        }
+                      }}>
                         <CompareToggleIcon card={card} />
                       </div>
 
@@ -1167,17 +1289,21 @@ const CardListing = () => {
                           </Badge>
                         )}
 
-                      {/* LTF Badge */}
+                      {/* Status Badge: Discontinued / Invite Only / LTF */}
                       {(() => {
-                        const categorySavings = cardSavings[filters.category] || {};
-                        const cardKey = getCardKey(card);
-                        const saving = categorySavings[String(card.id)] ?? categorySavings[cardKey];
-                        const isJoiningFree = card.joining_fee_text === "0" || card.joining_fee_text?.toLowerCase?.() === "free";
-                        const isAnnualFree = card.annual_fee_text === "0" || card.annual_fee_text?.toLowerCase?.() === "free";
-                        return !saving && isJoiningFree && isAnnualFree && <Badge className="absolute bottom-3 right-3 bg-[#F5F5F5] text-black z-10">LTF</Badge>;
+                        const status = getCardStatus(card);
+                        if (!status) return null;
+                        // Suppress LTF specifically when a category saving is shown (existing behavior).
+                        if (status === 'lifetime_free') {
+                          const categorySavings = cardSavings[filters.category] || {};
+                          const cardKey = getCardKey(card);
+                          const saving = categorySavings[String(card.id)] ?? categorySavings[cardKey];
+                          if (saving) return null;
+                        }
+                        return <Badge className="absolute bottom-3 right-3 bg-[#F5F5F5] text-black z-10">{CARD_STATUS_LABEL[status]}</Badge>;
                       })()}
 
-                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="w-full h-full object-contain scale-110" onError={e => {
+                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="w-full h-full object-contain scale-110" onClick={() => trackCardClicked(getCardAlias(card) || card.seo_card_alias, card.name, card.banks?.name, index)} onError={e => {
                         e.currentTarget.src = '/placeholder.svg';
                       }} />
                     </div>
@@ -1228,14 +1354,20 @@ const CardListing = () => {
                       </div>
 
                       <div className="flex flex-col md:flex-row gap-2 mt-auto">
-                        <Link to={`/cards/${getCardAlias(card) || card.id}`} className="flex-1 md:w-1/2 w-full" onClick={() => analytics.trackCardAction('View Details', card.name)}>
+                        <Link to={`/cards/${getCardAlias(card) || card.id}`} className={isApplyDisabled(card) ? "w-full" : "flex-1 md:w-1/2 w-full"} onClick={() => {
+                          analytics.trackCardAction('View Details', card.name);
+                          trackCardDetailsClicked(getCardAlias(card) || card.seo_card_alias, card.name, index);
+                          trackCardClicked(getCardAlias(card) || card.seo_card_alias, card.name, card.banks?.name, index);
+                        }}>
                           <Button variant="outline" className="w-full h-11 md:h-10 text-sm font-semibold">
                             Details
                           </Button>
                         </Link>
-                        <Button className="flex-1 h-11 md:h-10 text-sm md:w-1/2  w-full font-semibold" onClick={() => handleApplyClick(card)}>
-                          Apply&nbsp;Now
-                        </Button>
+                        {!isApplyDisabled(card) && (
+                          <Button className="flex-1 h-11 md:h-10 text-sm md:w-1/2  w-full font-semibold" onClick={() => handleApplyClick(card)}>
+                            Apply&nbsp;Now
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>)}
@@ -1326,7 +1458,10 @@ const CardListing = () => {
             <>
               <span className="h-5 w-px bg-border" />
               <button
-                onClick={() => window.dispatchEvent(new Event('openComparison'))}
+                onClick={() => {
+                  trackComparePanelViewed(selectedCards.length);
+                  window.dispatchEvent(new Event('openComparison'));
+                }}
                 className="text-[#004E92] font-semibold text-sm h-11 px-1"
               >
                 View Compare

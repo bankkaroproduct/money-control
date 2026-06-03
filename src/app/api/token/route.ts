@@ -19,7 +19,7 @@ const ALLOWED_ORIGINS = [
     process.env.NEXT_PUBLIC_APP_URL,
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3002',
+    'http://localhost:3004',
     'https://bankkaro.com',
     'https://bankexpert.bankkaro.com',
     'https://shubham-bank-expert.vercel.app',

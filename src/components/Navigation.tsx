@@ -5,6 +5,17 @@ import { ChevronDown, X } from "lucide-react";
 import { Link } from "@/components/Link";
 import NavLink from "@/components/NavLink";
 import { analytics } from "@/services/analytics";
+import {
+  trackNavHomeClicked,
+  trackNavDiscoverClicked,
+  trackNavAboutClicked,
+  trackNavToolsDropdownOpened,
+  trackNavToolSelected,
+  trackNavBlogsClicked,
+  trackNavSocialsDropdownOpened,
+  trackNavSocialSelected,
+  trackNavLogoClicked,
+} from "@/services/journeyTrack";
 import { brandConfig } from "@/config/brand.config";
 import { useAutoHideNav } from "@/hooks/useAutoHideNav";
 
@@ -164,7 +175,7 @@ const MobileMenuOverlay = ({
             <Link
               to="/"
               className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 text-lg font-bold text-slate-900 dark:text-slate-100 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-              onClick={onClose}
+              onClick={() => { trackNavHomeClicked('home'); onClose(); }}
             >
               Home
             </Link>
@@ -173,13 +184,13 @@ const MobileMenuOverlay = ({
             <Link
               to="/cards"
               className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 text-lg font-bold text-slate-900 dark:text-slate-100 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-              onClick={onClose}
+              onClick={() => { trackNavDiscoverClicked('discover'); onClose(); }}
             >
               Discover
             </Link>
 
             {/* Tools Section */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-2" onMouseEnter={() => trackNavToolsDropdownOpened()}>
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 px-1">
                 🛠️ Tools
               </p>
@@ -192,7 +203,7 @@ const MobileMenuOverlay = ({
                         key={tool.to}
                         to={tool.to}
                         className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-                        onClick={onClose}
+                        onClick={() => { trackNavToolSelected(tool.label); onClose(); }}
                       >
                         <div className="font-bold text-slate-900 dark:text-slate-100">
                           {tool.label}
@@ -212,13 +223,13 @@ const MobileMenuOverlay = ({
             <Link
               to="/blogs"
               className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 text-lg font-bold text-slate-900 dark:text-slate-100 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-              onClick={onClose}
+              onClick={() => { trackNavBlogsClicked('blogs'); onClose(); }}
             >
               Blogs
             </Link>
 
             {/* Socials Section */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-2" onMouseEnter={() => trackNavSocialsDropdownOpened()}>
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 px-1">
                 Socials
               </p>
@@ -234,7 +245,7 @@ const MobileMenuOverlay = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block rounded-2xl border-2 border-slate-200 dark:border-slate-700 px-5 py-4 font-bold text-slate-900 dark:text-slate-100 hover:border-[#004E92] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-                    onClick={onClose}
+                    onClick={() => { trackNavSocialSelected(s.label); onClose(); }}
                   >
                     {s.label}
                   </a>
@@ -297,15 +308,15 @@ const Navigation = () => {
   }, [isMobileMenuOpen]);
 
   const navLinks: MobileNavItem[] = useMemo(() => ([
-    { label: 'Home', to: '/', action: () => analytics.trackMenuClick('Home') },
-    { label: 'Discover', to: '/cards', action: () => analytics.trackMenuClick('Discover') },
-    { label: 'About', to: '/about', action: () => analytics.trackMenuClick('About') },
+    { label: 'Home', to: '/', action: () => { analytics.trackMenuClick('Home'); trackNavHomeClicked('home'); } },
+    { label: 'Discover', to: '/cards', action: () => { analytics.trackMenuClick('Discover'); trackNavDiscoverClicked('discover'); } },
+    { label: 'About', to: '/about', action: () => { analytics.trackMenuClick('About'); trackNavAboutClicked('about'); } },
   ]), []);
 
   const toolLinks: MobileNavItem[] = useMemo(() => ([
-    { label: 'Super Card Genius', description: 'AI finds the right card for you.', to: '/card-genius', action: () => analytics.trackMenuClick('Super Card Genius') },
-    { label: 'Category Card Genius', description: 'Find the best card for your spend style.', to: '/card-genius-category', action: () => analytics.trackMenuClick('Category Card Genius') },
-    { label: 'Beat My Card', description: 'See if you can upgrade your card.', to: '/beat-my-card', action: () => analytics.trackMenuClick('Beat My Card') },
+    { label: 'Super Card Genius', description: 'AI finds the right card for you.', to: '/card-genius', action: () => { analytics.trackMenuClick('Super Card Genius'); trackNavToolSelected('Super Card Genius'); } },
+    { label: 'Category Card Genius', description: 'Find the best card for your spend style.', to: '/card-genius-category', action: () => { analytics.trackMenuClick('Category Card Genius'); trackNavToolSelected('Category Card Genius'); } },
+    { label: 'Beat My Card', description: 'See if you can upgrade your card.', to: '/beat-my-card', action: () => { analytics.trackMenuClick('Beat My Card'); trackNavToolSelected('Beat My Card'); } },
   ]), []);
 
   const mobileSections: MobileSection[] = useMemo(() => ([
@@ -329,7 +340,7 @@ const Navigation = () => {
   >
     <div className="container mx-auto px-4 py-1.5 lg:py-2 overflow-visible">
       <div className="flex items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2.5">
+        <Link to="/" className="flex items-center gap-2.5" onClick={() => trackNavLogoClicked()}>
           <div className="h-9 w-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
             <img src={brandConfig.logo} alt={brandConfig.name} className="h-8 w-8 rounded-full object-contain" />
           </div>
@@ -351,8 +362,11 @@ const Navigation = () => {
           ))}
 
           {/* Tools Dropdown */}
-          <div className="relative group">
-            <button className="text-white/90 hover:text-white transition-colors font-medium flex items-center gap-1">
+          <div className="relative group" onMouseEnter={() => trackNavToolsDropdownOpened()}>
+            <button
+              className="text-white/90 hover:text-white transition-colors font-medium flex items-center gap-1"
+              onFocus={() => trackNavToolsDropdownOpened()}
+            >
               Tools
               <ChevronDown className="w-4 h-4" />
             </button>
@@ -376,24 +390,28 @@ const Navigation = () => {
             to="/blogs"
             className="text-white/90 hover:text-white transition-colors font-medium"
             activeClassName="text-white font-semibold underline underline-offset-4"
+            onClick={() => trackNavBlogsClicked('blogs')}
           >
             Blogs
           </NavLink>
 
           {/* Socials Dropdown */}
-          <div className="relative group">
-            <button className="text-white/90 hover:text-white transition-colors font-medium flex items-center gap-1">
+          <div className="relative group" onMouseEnter={() => trackNavSocialsDropdownOpened()}>
+            <button
+              className="text-white/90 hover:text-white transition-colors font-medium flex items-center gap-1"
+              onFocus={() => trackNavSocialsDropdownOpened()}
+            >
               Socials
               <ChevronDown className="w-4 h-4" />
             </button>
             <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute top-full right-0 mt-2 w-44 bg-background border border-border rounded-2xl shadow-xl py-2 z-[100]">
-              <a href="https://www.youtube.com/@bankexpert" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+              <a href="https://www.youtube.com/@bankexpert" target="_blank" rel="noopener noreferrer" onClick={() => trackNavSocialSelected('YouTube')} className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
                 YouTube
               </a>
-              <a href="https://www.instagram.com/bank.experts/" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+              <a href="https://www.instagram.com/bank.experts/" target="_blank" rel="noopener noreferrer" onClick={() => trackNavSocialSelected('Instagram')} className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
                 Instagram
               </a>
-              <a href="https://www.facebook.com/people/Bank-Expert/61556117044087/#" target="_blank" rel="noopener noreferrer" className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
+              <a href="https://www.facebook.com/people/Bank-Expert/61556117044087/#" target="_blank" rel="noopener noreferrer" onClick={() => trackNavSocialSelected('Facebook')} className="block px-4 py-2.5 text-foreground hover:bg-accent transition-colors font-medium text-sm">
                 Facebook
               </a>
             </div>

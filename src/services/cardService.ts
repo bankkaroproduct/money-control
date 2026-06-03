@@ -93,12 +93,40 @@ export const cardService = {
   // ── WRITE / CALCULATE operations → POST ───────────────────────────
 
   async calculateCardGenius(spendingData: SpendingData) {
+    // The calculate API validates that EVERY spend field is present. Callers often
+    // build partial payloads (only the fields they collect), which triggers a 400
+    // "<field> is required". Normalize here so all fields default to 0.
+    const fullPayload: Required<SpendingData> = {
+      amazon_spends: 0,
+      flipkart_spends: 0,
+      other_online_spends: 0,
+      other_offline_spends: 0,
+      grocery_spends_online: 0,
+      online_food_ordering: 0,
+      fuel: 0,
+      dining_or_going_out: 0,
+      flights_annual: 0,
+      hotels_annual: 0,
+      domestic_lounge_usage_quarterly: 0,
+      international_lounge_usage_quarterly: 0,
+      mobile_phone_bills: 0,
+      electricity_bills: 0,
+      water_bills: 0,
+      insurance_car_or_bike_annual: 0,
+      insurance_health_annual: 0,
+      rent: 0,
+      school_fees: 0,
+      life_insurance: 0,
+      offline_grocery: 0,
+      ...spendingData,
+    };
+
     const response = await authManager.makeAuthenticatedRequest(
       `${BASE_URL}/cardgenius/calculate`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(spendingData),
+        body: JSON.stringify(fullPayload),
       }
     );
     return response.json();

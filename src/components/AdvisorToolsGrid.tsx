@@ -1,6 +1,13 @@
 "use client";
 import { ArrowRight, Sparkles, Swords, LayoutGrid } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Link } from "@/components/Link";
+import {
+  trackToolsSectionViewed,
+  trackHomepageSuperCardGeniusClicked,
+  trackHomepageBeatMyCardClicked,
+  trackHomepageCategoryCardGeniusClicked,
+} from "@/services/journeyTrack";
 
 const tools = [
   {
@@ -9,6 +16,7 @@ const tools = [
     description:
       "Get AI-powered recommendations for the perfect credit card based on your spending habits.",
     to: "/card-genius",
+    onTrack: () => trackHomepageSuperCardGeniusClicked("Super Card Genius", "tools_section"),
   },
   {
     icon: Swords,
@@ -16,6 +24,7 @@ const tools = [
     description:
       "Find a better card than the one you already have — compare benefits, fees, and rewards instantly.",
     to: "/beat-my-card",
+    onTrack: () => trackHomepageBeatMyCardClicked("Beat My Card", "tools_section"),
   },
   {
     icon: LayoutGrid,
@@ -23,12 +32,32 @@ const tools = [
     description:
       "Discover the best credit card for any spending category — fuel, travel, groceries, and more.",
     to: "/card-genius-category",
+    onTrack: () => trackHomepageCategoryCardGeniusClicked("Category Card Genius", "tools_section"),
   },
 ];
 
 const AdvisorToolsGrid = () => {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const viewedRef = useRef(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !viewedRef.current) {
+          viewedRef.current = true;
+          trackToolsSectionViewed();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="py-16 md:py-24" style={{ backgroundColor: "#004E92" }}>
+    <section ref={sectionRef} className="py-16 md:py-24" style={{ backgroundColor: "#004E92" }}>
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center mb-12">
           <p
@@ -53,6 +82,7 @@ const AdvisorToolsGrid = () => {
             <Link
               to={tool.to}
               key={tool.title}
+              onClick={() => tool.onTrack()}
               className="group rounded-2xl p-8 flex flex-col transition-all duration-300 hover:-translate-y-1"
               style={{
                 backgroundColor: "rgba(255,255,255,0.08)",

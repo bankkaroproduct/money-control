@@ -13,6 +13,16 @@ import { toast } from "sonner";
 import { enrichCardGeniusResults, CardGeniusResult } from "@/lib/cardGenius";
 import { feeCalc } from "@/lib/feeUtils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { getCardStatus, isApplyDisabled, CARD_STATUS_LABEL } from '@/utils/cardStatus';
+import {
+  trackCcgCategorySelected,
+  trackCcgSpendsFilled,
+  trackCcgCalculateClicked,
+  trackCcgResultsView,
+  trackCcgResultCardClicked,
+  trackCcgApplyNowClicked,
+  trackCcgResetClicked,
+} from "@/services/journeyTrack";
 import { useState, useEffect, useRef } from "react";
 
 
@@ -228,6 +238,7 @@ const cgcatSsClear = (...keys: string[]) => {
 const CategoryCardGenius = () => {
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const resultsViewTrackedRef = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 const [showQuestions, setShowQuestions] = useState<boolean>(false);
 const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -317,6 +328,7 @@ useEffect(() => {
   const currentQuestion = selectedCategoryData?.questions[currentQuestionIndex];
   const handleCategorySelect = (categoryId: string) => {
     analytics.trackGeniusStart(categoryId);
+    trackCcgCategorySelected(categoryId);
     // Clear persisted data for the old category before starting fresh
     cgcatSsClear(...Object.values(CGCAT_KEYS));
     setSelectedCategory(categoryId);
@@ -324,6 +336,7 @@ useEffect(() => {
     setCurrentQuestionIndex(0);
     setResponses({});
     setResults([]);
+    resultsViewTrackedRef.current = false;
   };
   const handleNext = () => {
     if (!selectedCategoryData) return;
@@ -348,6 +361,8 @@ useEffect(() => {
   const handleCalculate = async () => {
     if (!selectedCategoryData) return;
 
+    trackCcgCalculateClicked(selectedCategory || 'unknown');
+
     const requiredQuestions = selectedCategoryData.questions.filter(q => !q.optional);
     const questionsToCheck = requiredQuestions.length > 0 ? requiredQuestions : selectedCategoryData.questions;
     const hasValue = questionsToCheck.some(q => {
@@ -360,6 +375,7 @@ useEffect(() => {
       setCurrentQuestionIndex(0);
       return;
     }
+    trackCcgSpendsFilled(selectedCategory || 'unknown', responses);
     setLoading(true);
     setCurrentFactIndex(0);
     try {
@@ -414,6 +430,14 @@ useEffect(() => {
 
       setResults(topCards);
       analytics.trackGeniusComplete(selectedCategory || 'unknown', topCards.length);
+      if (!resultsViewTrackedRef.current) {
+        resultsViewTrackedRef.current = true;
+        trackCcgResultsView(
+          selectedCategory || 'unknown',
+          topCards.length,
+          topCards[0]?.card_name || 'unknown'
+        );
+      }
 
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({
@@ -429,12 +453,14 @@ useEffect(() => {
     }
   };
   const resetCalculator = () => {
+    trackCcgResetClicked();
     cgcatSsClear(...Object.values(CGCAT_KEYS));
     setSelectedCategory(null);
     setShowQuestions(false);
     setCurrentQuestionIndex(0);
     setResponses({});
     setResults([]);
+    resultsViewTrackedRef.current = false;
   };
   const getTotalSpending = () => {
     return Object.values(responses).reduce((sum, val) => sum + val, 0);
@@ -456,13 +482,19 @@ useEffect(() => {
       return catalogAliases.some(alias => probes.includes(alias));
     }) || null;
   };
-  const handleViewDetails = (card: any) => {
+  const handleViewDetails = (card: any, index?: number) => {
     try {
       const matchingCard = findCatalogMatch(card);
       analytics.trackGeniusResultClick(matchingCard?.card_name || card.card_name || 'unknown');
       analytics.trackCardAction('View Details', matchingCard?.card_name || card.card_name || 'unknown');
 
       const alias = matchingCard?.seo_card_alias || matchingCard?.card_alias || matchingCard?.slug || card.seo_card_alias || card.card_alias || card.slug;
+      trackCcgResultCardClicked(
+        alias,
+        matchingCard?.card_name || card.card_name || card.name || 'unknown',
+        selectedCategory || 'unknown',
+        typeof index === 'number' ? index + 1 : undefined
+      );
       if (alias) {
         router.push(`/cards/${alias}`);
       } else {
@@ -479,6 +511,11 @@ useEffect(() => {
       const matchingCard = findCatalogMatch(card) || card;
       analytics.trackGeniusResultClick(matchingCard.card_name || matchingCard.name || card.card_name || 'unknown');
       analytics.trackCardAction('Apply Now', matchingCard.card_name || matchingCard.name || card.card_name || 'unknown');
+      trackCcgApplyNowClicked(
+        matchingCard.card_name || matchingCard.name || card.card_name || 'unknown',
+        matchingCard.seo_card_alias || matchingCard.card_alias || matchingCard.slug || card.seo_card_alias || card.card_alias || card.slug,
+        selectedCategory || 'unknown'
+      );
 
       if (applyEligibilityDone) {
         redirectToCardApplication(matchingCard);
@@ -531,6 +568,12 @@ useEffect(() => {
               <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 px-3 py-1 text-xs font-bold shadow-lg">
                 🏆 Best Match
               </Badge>
+            </div>}
+
+            {getCardStatus(card) && <div className="absolute top-4 left-4 z-10">
+              <span className="bg-[#F5F5F5] text-black rounded px-2 py-0.5 text-xs">
+                {CARD_STATUS_LABEL[getCardStatus(card)!]}
+              </span>
             </div>}
 
             {/* Card Image */}
@@ -734,10 +777,10 @@ useEffect(() => {
 
               {/* CTA Buttons */}
               <div className="space-y-2">
-                <Button className="w-full shadow-lg" size="lg" onClick={() => handleApplyNow(card)}>
+                {!isApplyDisabled(card) && <Button className="w-full shadow-lg" size="lg" onClick={() => handleApplyNow(card)}>
                   Apply Now
-                </Button>
-                <Button variant="outline" className="w-full" size="sm" onClick={() => handleViewDetails(card)}>
+                </Button>}
+                <Button variant="outline" className="w-full" size="sm" onClick={() => handleViewDetails(card, index)}>
                   View Details
                 </Button>
               </div>

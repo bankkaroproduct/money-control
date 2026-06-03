@@ -7,6 +7,18 @@ import AdvisorToolsGrid from "@/components/AdvisorToolsGrid";
 import Footer from "@/components/Footer";
 import { Link } from "@/components/Link";
 import { authManager } from "@/services/authManager";
+import {
+  trackHomePageView,
+  trackPicksSectionViewed,
+  trackPicksTabSelected,
+  trackPicksCardClicked,
+  trackPicksCardDetailsClicked,
+  trackHeroExplorePicksAnchorClicked,
+  trackHeroSearchBarFocused,
+  trackSearchSubmitted,
+  trackSearchQueryTyped,
+  trackHeroExploreAllCardsClicked,
+} from "@/services/journeyTrack";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type CardItem = {
@@ -123,8 +135,16 @@ function CardTile({ card }: { card: CardItem }) {
     ? card.networks.split(",").map((n) => n.trim()).filter(Boolean)
     : [];
 
+  const handleCardClick = () => {
+    trackPicksCardClicked(card.alias, card.name, card.bank, 'picks');
+  };
+
+  const handleDetailsClick = () => {
+    trackPicksCardDetailsClicked(card.alias, card.name, 'picks');
+  };
+
   return (
-    <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200" onClick={handleCardClick}>
       {/* Image — full width, flush to top */}
       <div className="h-44 bg-[#FFF5E6] flex items-center justify-center overflow-hidden">
         <img
@@ -155,6 +175,7 @@ function CardTile({ card }: { card: CardItem }) {
         <div className="mt-auto">
           <Link
             to={card.alias ? `/cards/${card.alias}` : "/cards"}
+            onClick={handleDetailsClick}
             className="block w-full text-center text-xs font-semibold py-2.5 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#EEF4FF] transition-colors"
           >
             Details
@@ -281,15 +302,20 @@ function ShubhamPicks() {
   };
 
   // Load default tab on mount
-  useEffect(() => { fetchCardsForTab("picks"); }, []); // eslint-disable-line
+  useEffect(() => {
+    trackHomePageView();
+    fetchCardsForTab("picks");
+    trackPicksSectionViewed();
+  }, []); // eslint-disable-line
 
   const handleTabClick = (tabKey: TabKey) => {
     setActiveTab(tabKey);
     fetchCardsForTab(tabKey);
+    trackPicksTabSelected(tabKey);
   };
 
   return (
-    <section className="py-14 bg-[#F9FAFB]">
+    <section id="picks-section" className="py-14 bg-[#F9FAFB]">
       <div className="container max-w-5xl mx-auto px-4">
         {/* Section header */}
         <div className="mb-8">
@@ -364,6 +390,7 @@ const HomeLanding = () => {
   const router = useRouter();
 
   const handleSearch = () => {
+    trackSearchSubmitted(query.trim());
     router.push(query.trim() ? `/cards?q=${encodeURIComponent(query.trim())}` : "/cards");
   };
 
@@ -406,7 +433,14 @@ const HomeLanding = () => {
               Learn which cards work best for you. No bias. No spam.
             </p>
 
-            <p className="text-sm font-medium mb-8" style={{ color: "#004E92" }}>
+            <p
+              className="text-sm font-medium mb-8 cursor-pointer"
+              style={{ color: "#004E92" }}
+              onClick={() => {
+                trackHeroExplorePicksAnchorClicked('hero');
+                document.getElementById('picks-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               ↓ Explore BankExpert's Picks Below
             </p>
 
@@ -417,7 +451,8 @@ const HomeLanding = () => {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => { setQuery(e.target.value); trackSearchQueryTyped(e.target.value); }}
+                    onFocus={() => trackHeroSearchBarFocused()}
                     onKeyDown={handleKeyDown}
                     placeholder="Search by card name or bank…"
                     className="w-full pl-11 pr-4 h-12 text-sm text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
@@ -439,6 +474,7 @@ const HomeLanding = () => {
                   to="/cards"
                   className="inline-flex items-center gap-1.5 text-sm font-medium px-6 py-3 rounded-lg transition-colors"
                   style={{ border: "1.5px solid #004E92", color: "#004E92", backgroundColor: "transparent" }}
+                  onClick={() => trackHeroExploreAllCardsClicked('hero')}
                 >
                   Explore All Cards →
                 </Link>

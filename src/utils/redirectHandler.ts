@@ -5,6 +5,7 @@
 
 import { toast } from 'sonner';
 import { brandConfig } from '@/config/brand.config';
+import { clickTracker } from '@/services/clickTracker';
 
 /** Matches any unfilled template placeholder like {click_id} or {user_id} */
 const PLACEHOLDER_RE = /\{[^}]+\}/;
@@ -149,11 +150,15 @@ const trackRedirectClick = (data: {
   }
 
   try {
+    // Get click_id if available
+    const clickId = clickTracker.getClickId();
+
     // Use sendBeacon for reliable tracking even if page unloads
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/api/redirect-click', JSON.stringify({
         event: 'apply_click',
         ...data,
+        ...(clickId ? { click_id: clickId } : {}),
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
       }));
@@ -161,7 +166,7 @@ const trackRedirectClick = (data: {
 
     // Also log to console in development
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Redirect click tracked:', data);
+      console.log('Redirect click tracked:', data, { click_id: clickId });
     }
   } catch (error) {
     console.error('Failed to track redirect click:', error);
@@ -217,10 +222,13 @@ const cleanUrl = (rawUrl: string): string => {
     // Get partner name from brand config
     const partnerName = brandConfig.name?.toLowerCase() || 'bankkaro';
 
+    // Get click_id if available
+    const clickId = clickTracker.getClickId() || '';
+
     // Replace known placeholders with actual values
     let url = rawUrl.trim()
       .replace('{user_id}', partnerName)  // e.g. 'tide'
-      .replace('{click_id}', '');         // leave empty
+      .replace('{click_id}', clickId);    // insert actual click_id
 
     // Remove any remaining unfilled placeholders
     const parsed = new URL(url);
@@ -240,7 +248,7 @@ const cleanUrl = (rawUrl: string): string => {
 /**
  * Convenience helper to open card application flows from raw card objects
  */
-export const redirectToCardApplication = (card: any, overrides: Partial<RedirectParams> = {}): boolean => {
+export const redirectToCardApplication = async (card: any, overrides: Partial<RedirectParams> = {}): Promise<boolean> => {
   const rawUrl =
     overrides.networkUrl ??
     card?.network_url ??
@@ -273,8 +281,23 @@ export const redirectToCardApplication = (card: any, overrides: Partial<Redirect
     return false;
   }
 
+  // Import here to avoid circular dependency
+  const { getTrackedLink, trackRedirectToUrl } = await import('@/services/journeyTrack');
+
+  // Get tracked link with exit ID
+  const trackedLinkData = await getTrackedLink(url);
+  let finalUrl = url;
+  let exitId: string | undefined;
+
+  if (trackedLinkData) {
+    finalUrl = trackedLinkData.url;
+    exitId = trackedLinkData.exitid;
+    // Send redirect event with exit ID
+    await trackRedirectToUrl(exitId, card?.alias || card?.card_alias);
+  }
+
   const windowRef = openRedirectInterstitial({
-    networkUrl: url,
+    networkUrl: finalUrl,
     bankName: overrides.bankName ?? extractBankName(card),
     bankLogo: overrides.bankLogo ?? extractBankLogo(card),
     cardName: overrides.cardName ?? card?.name ?? 'Credit Card',

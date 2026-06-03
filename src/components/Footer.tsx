@@ -1,12 +1,39 @@
 "use client";
 import { Link } from "@/components/Link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { brandConfig } from "@/config/brand.config";
 import { analytics } from "@/services/analytics";
+import {
+  trackFooterSectionViewed,
+  trackFooterQuickLinkClicked,
+  trackFooterEmailClicked,
+  trackFooterBankKaroLogoClicked,
+  trackFooterPrivacyPolicyClicked,
+  trackFooterTermsClicked,
+} from "@/services/journeyTrack";
 
 const Footer = () => {
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const footerRef = useRef<HTMLElement | null>(null);
+  const viewedRef = useRef(false);
+
+  // Fire footer_section_viewed once when footer scrolls into view
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !viewedRef.current) {
+          viewedRef.current = true;
+          trackFooterSectionViewed();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const sections = useMemo(() => ([
     {
@@ -18,7 +45,10 @@ const Footer = () => {
             <div className="text-sm opacity-80 leading-relaxed mb-4">
               Helping users make smarter credit card decisions with personalized recommendations, detailed comparisons, and expert insights.
             </div>
-            <div className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+            <div
+              className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+              onClick={() => trackFooterBankKaroLogoClicked()}
+            >
               <span className="text-[10px] uppercase tracking-wider font-medium">Powered by</span>
               <img
                 src="/bankkaro-powered.svg"
@@ -35,12 +65,12 @@ const Footer = () => {
       title: "Quick Links",
       content: (
         <ul className="space-y-3 text-sm opacity-80">
-          <li><Link to="/" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('Home')}>Home</Link></li>
-          <li><Link to="/cards" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('Discover Cards')}>Discover Cards</Link></li>
-          <li><Link to="/card-genius" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('AI Card Genius')}>AI Card Genius</Link></li>
-          <li><Link to="/card-genius-category" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('AI Category Card Genius')}>AI Category Card Genius</Link></li>
-          <li><Link to="/beat-my-card" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('Beat My Card')}>Beat My Card</Link></li>
-          <li><Link to="/blogs" className="hover:opacity-100 transition-opacity" onClick={() => analytics.trackFooterClick('Blogs')}>Blogs</Link></li>
+          <li><Link to="/" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Home'); trackFooterQuickLinkClicked('Home'); }}>Home</Link></li>
+          <li><Link to="/cards" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Discover Cards'); trackFooterQuickLinkClicked('Discover Cards'); }}>Discover Cards</Link></li>
+          <li><Link to="/card-genius" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('AI Card Genius'); trackFooterQuickLinkClicked('AI Card Genius'); }}>AI Card Genius</Link></li>
+          <li><Link to="/card-genius-category" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('AI Category Card Genius'); trackFooterQuickLinkClicked('AI Category Card Genius'); }}>AI Category Card Genius</Link></li>
+          <li><Link to="/beat-my-card" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Beat My Card'); trackFooterQuickLinkClicked('Beat My Card'); }}>Beat My Card</Link></li>
+          <li><Link to="/blogs" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Blogs'); trackFooterQuickLinkClicked('Blogs'); }}>Blogs</Link></li>
         </ul>
       )
     },
@@ -50,7 +80,7 @@ const Footer = () => {
       content: (
         <div className="space-y-3 text-sm opacity-80">
           <p>Have questions? We're here to help!</p>
-          <p>  <a href={`mailto:${brandConfig.email}`} className="hover:opacity-100 transition-opacity">{brandConfig.email}</a></p>
+          <p>  <a href={`mailto:${brandConfig.email}`} className="hover:opacity-100 transition-opacity" onClick={() => trackFooterEmailClicked(brandConfig.email)}>{brandConfig.email}</a></p>
           <p>Available 24/7 to assist you with your credit card queries.</p>
         </div>
       )
@@ -58,7 +88,7 @@ const Footer = () => {
   ]), []);
 
   return (
-    <footer className="text-white pt-12 sm:pt-14 md:pt-16 pb-8 sm:pb-10 safe-area-inset-bottom" style={{ backgroundColor: "#004E92" }}>
+    <footer ref={footerRef} className="text-white pt-12 sm:pt-14 md:pt-16 pb-8 sm:pb-10 safe-area-inset-bottom" style={{ backgroundColor: "#004E92" }}>
       <div className="section-shell">
         {/* Desktop: 3-column grid */}
         <div className="hidden md:grid md:grid-cols-3 gap-10 lg:gap-12 mb-10 lg:mb-12">
@@ -101,9 +131,9 @@ const Footer = () => {
             © {new Date().getFullYear()} Pouring Pounds India Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-4 sm:gap-5 text-xs sm:text-sm opacity-60">
-            <a href="https://bankkaro.com/privacy-policy" target="_blank" className="hover:opacity-100 hover:text-white transition-all">Privacy Policy</a>
+            <a href="https://bankkaro.com/privacy-policy" target="_blank" className="hover:opacity-100 hover:text-white transition-all" onClick={() => trackFooterPrivacyPolicyClicked()}>Privacy Policy</a>
             <span className="hidden sm:inline">•</span>
-            <a href="https://bankkaro.com/terms-conditions" target="_blank" className="hover:opacity-100 hover:text-white transition-all">Terms of Service</a>
+            <a href="https://bankkaro.com/terms-conditions" target="_blank" className="hover:opacity-100 hover:text-white transition-all" onClick={() => trackFooterTermsClicked()}>Terms of Service</a>
           </div>
         </div>
       </div>

@@ -9,8 +9,19 @@ import type { SpendingData } from "@/services/cardService";
 import { useToast } from "@/hooks/use-toast";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { redirectToCardApplication } from "@/utils/redirectHandler";
+import {
+  trackScgApplyNowClicked,
+  trackScgPageView,
+  trackScgFormStarted,
+  trackScgSpendsFilled,
+  trackScgCalculateClicked,
+  trackScgResultsView,
+  trackScgResultCardClicked,
+  trackScgResetClicked,
+} from "@/services/journeyTrack";
 import EligibilityDialog from "@/components/EligibilityDialog";
 import { enrichCardGeniusResults, CardGeniusResult } from "@/lib/cardGenius";
+import { getCardStatus, isApplyDisabled, CARD_STATUS_LABEL } from "@/utils/cardStatus";
 import { feeCalc } from "@/lib/feeUtils";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -258,8 +269,12 @@ const CardGenius = () => {
 
   // Question refs for IntersectionObserver
   const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Journey tracking guard - fires "form started" only once
+  const formStartedRef = useRef(false);
   useEffect(() => {
     setShowWelcomeDialog(true);
+    trackScgPageView('super_card_genius');
   }, []);
   useEffect(() => {
     if (selectedCard?.spending_breakdown) {
@@ -302,6 +317,10 @@ const CardGenius = () => {
   const internationalLoungeValue = maxInternationalLoungeValue;
 
   const handleValueChange = (value: number) => {
+    if (!formStartedRef.current) {
+      formStartedRef.current = true;
+      trackScgFormStarted();
+    }
     setResponses(prev => ({
       ...prev,
       [currentQuestion.field]: value
@@ -376,6 +395,7 @@ const CardGenius = () => {
     }
   };
   const calculateResults = async () => {
+    trackScgCalculateClicked();
     // Validate that at least one non-lounge spend is entered
     let hasAnySpend = false;
     for (const key in responses) {
@@ -405,6 +425,7 @@ const CardGenius = () => {
       questions.forEach(q => {
         payload[q.field as keyof SpendingData] = responses[q.field] || 0;
       });
+      trackScgSpendsFilled(payload);
       const response = await cardService.calculateCardGenius(payload);
       const savingsArray = Array.isArray(response?.data?.savings)
         ? response.data.savings
@@ -437,6 +458,8 @@ const CardGenius = () => {
         return;
       }
 
+      const topResult = [...enrichedResults].sort((a, b) => b.net_savings - a.net_savings)[0];
+      trackScgResultsView(enrichedResults.length, topResult?.card_name);
       setResults(enrichedResults);
       setShowResults(true);
     } catch (error) {
@@ -454,15 +477,17 @@ const CardGenius = () => {
   const toggleCardExpansion = (index: number) => {
     setExpandedCards(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
   };
-  const handleApplyFromDetail = () => {
+  const handleApplyFromDetail = async () => {
     if (!selectedCard) return;
+    trackScgApplyNowClicked(selectedCard.card_name, selectedCard.seo_card_alias);
     if (applyEligibilityDone) {
-      redirectToCardApplication(selectedCard);
+      await redirectToCardApplication(selectedCard);
       return;
     }
     setPendingApplyCard(selectedCard);
   };
-  const handleCardSelect = (card: CardGeniusResult) => {
+  const handleCardSelect = (card: CardGeniusResult, position?: number) => {
+    trackScgResultCardClicked(card.seo_card_alias, card.card_name, position);
     setSelectedCard(card);
     // Smooth scroll to top
     window.scrollTo({
@@ -470,13 +495,14 @@ const CardGenius = () => {
       behavior: 'smooth'
     });
   };
-  const handleApplyFromList = (card: CardGeniusResult, event?: React.MouseEvent<HTMLElement>) => {
+  const handleApplyFromList = async (card: CardGeniusResult, event?: React.MouseEvent<HTMLElement>) => {
     if (event) {
       event.stopPropagation();
       event.preventDefault();
     }
+    trackScgApplyNowClicked(card.card_name, card.seo_card_alias);
     if (applyEligibilityDone) {
-      redirectToCardApplication(card);
+      await redirectToCardApplication(card);
       return;
     }
     setPendingApplyCard(card);
@@ -589,8 +615,13 @@ const CardGenius = () => {
                   {bankLabel}
                 </p>
               )}
-              <h1 className="text-2xl sm:text-3xl font-bold leading-snug">
+              <h1 className="text-2xl sm:text-3xl font-bold leading-snug flex flex-wrap items-center gap-2">
                 {selectedCard.card_name}
+                {getCardStatus(selectedCard) && (
+                  <span className="bg-[#F5F5F5] text-black rounded px-2 py-0.5 text-xs font-semibold align-middle">
+                    {CARD_STATUS_LABEL[getCardStatus(selectedCard)!]}
+                  </span>
+                )}
               </h1>
               <p className="text-sm text-[#002D57]/80">Best card curated using your spends of ₹{(totalAnnualSpend / 100000).toFixed(2)}L annually.</p>
             </div>
@@ -750,10 +781,16 @@ const CardGenius = () => {
             })()}
           </section>
 
-          <Button className="w-full h-12 text-base font-semibold shadow-xl" size="lg" onClick={handleApplyFromDetail}>
-            Apply Now
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          {isApplyDisabled(selectedCard) ? (
+            <Button className="w-full h-12 text-base font-semibold shadow-xl" size="lg" disabled>
+              {CARD_STATUS_LABEL[getCardStatus(selectedCard)!]}
+            </Button>
+          ) : (
+            <Button className="w-full h-12 text-base font-semibold shadow-xl" size="lg" onClick={handleApplyFromDetail}>
+              Apply Now
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          )}
         </main>
         <EligibilityDialog
           open={!!pendingApplyCard}
@@ -785,6 +822,7 @@ const CardGenius = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button onClick={() => {
+              trackScgResetClicked();
               ssClear(...Object.values(CG_KEYS));
               setShowResults(false);
               setCurrentStep(0);
@@ -793,6 +831,7 @@ const CardGenius = () => {
               Recalculate
             </Button>
             <Button variant="outline" size="lg" onClick={() => {
+              trackScgResetClicked();
               ssClear(...Object.values(CG_KEYS));
               setShowResults(false);
               setSelectedCard(null);
@@ -958,18 +997,25 @@ const CardGenius = () => {
               <div
                 key={card.seo_card_alias || `${card.card_name}-${index}`}
                 className="rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_20px_45px_rgba(15,23,42,0.08)] space-y-4"
-                onClick={() => handleCardSelect(card)}
+                onClick={() => handleCardSelect(card, index + 1)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleCardSelect(card);
+                    handleCardSelect(card, index + 1);
                   }
                 }}
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-lg font-semibold text-foreground leading-tight">{card.card_name}</p>
+                    <p className="text-lg font-semibold text-foreground leading-tight flex flex-wrap items-center gap-2">
+                      {card.card_name}
+                      {getCardStatus(card) && (
+                        <span className="bg-[#F5F5F5] text-black rounded px-2 py-0.5 text-xs font-semibold">
+                          {CARD_STATUS_LABEL[getCardStatus(card)!]}
+                        </span>
+                      )}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                       Net Savings
                       <span className="font-semibold text-[#004E92] text-sm">
@@ -1047,18 +1093,20 @@ const CardGenius = () => {
                     className="flex-1"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleCardSelect(card);
+                      handleCardSelect(card, index + 1);
                     }}
                   >
                     View Insights
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={(e) => handleApplyFromList(card, e)}
-                  >
-                    Apply Now
-                  </Button>
+                  {!isApplyDisabled(card) && (
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={(e) => handleApplyFromList(card, e)}
+                    >
+                      Apply Now
+                    </Button>
+                  )}
                 </div>
               </div>
             );
@@ -1394,7 +1442,7 @@ const CardGenius = () => {
                     </thead>
                     <tbody>
                       {sortedResults.map((card, index) => {
-                        return <tr key={index} className={`border-t border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer ${index === 0 ? 'bg-[#F5F5F5]/60' : 'bg-white'}`} onClick={() => handleCardSelect(card)}>
+                        return <tr key={index} className={`border-t border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer ${index === 0 ? 'bg-[#F5F5F5]/60' : 'bg-white'}`} onClick={() => handleCardSelect(card, index + 1)}>
                           <td className="p-3 text-center text-sm font-bold text-muted-foreground w-10">{index + 1}</td>
                           <td className="p-3 sticky left-0 bg-white z-20 min-w-[260px] shadow-[4px_0_6px_-4px_rgba(15,23,42,0.08)]">
                             <div className="flex items-center gap-4">
@@ -1402,7 +1450,14 @@ const CardGenius = () => {
                                 e.currentTarget.src = "/placeholder.svg";
                               }} />
                               <div className="min-w-0">
-                                <p className="font-semibold text-foreground text-sm leading-tight break-words">{card.card_name}</p>
+                                <p className="font-semibold text-foreground text-sm leading-tight break-words flex flex-wrap items-center gap-1.5">
+                                  {card.card_name}
+                                  {getCardStatus(card) && (
+                                    <span className="bg-[#F5F5F5] text-black rounded px-2 py-0.5 text-xs font-semibold">
+                                      {CARD_STATUS_LABEL[getCardStatus(card)!]}
+                                    </span>
+                                  )}
+                                </p>
                                 <p className="text-[11px] text-muted-foreground">Net Savings ₹{Math.round(card.net_savings).toLocaleString()}</p>
                               </div>
                             </div>
@@ -1513,6 +1568,7 @@ const CardGenius = () => {
         {/* Start Over Button */}
         <div className="mt-8 text-center">
           <Button variant="outline" size="lg" onClick={() => {
+            trackScgResetClicked();
             ssClear(...Object.values(CG_KEYS));
             setShowResults(false);
             setCurrentStep(0);

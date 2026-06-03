@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { CreditCard, Gift, Plane, BadgePercent, FileText, Landmark, Youtube } from "lucide-react";
+import { trackAboutPageView, trackAboutSubscribeSectionViewed, trackAboutSubscribeClicked } from "@/services/journeyTrack";
 
 // ── Count-up hook ────────────────────────────────────────────────────────────
 function useCountUp(target: number, duration = 1800) {
@@ -47,7 +48,30 @@ const TOPICS = [
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 const About = () => {
+  const subscribeSectionRef = useRef<HTMLElement>(null);
+  const subscribeViewedRef = useRef(false);
+
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
+
+  useEffect(() => { trackAboutPageView(); }, []);
+
+  useEffect(() => {
+    const target = subscribeSectionRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !subscribeViewedRef.current) {
+          subscribeViewedRef.current = true;
+          trackAboutSubscribeSectionViewed();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -137,7 +161,7 @@ const About = () => {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-14 bg-[#F9FAFB]">
+      <section ref={subscribeSectionRef} className="py-14 bg-[#F9FAFB]">
         <div className="container max-w-xl mx-auto px-4">
           <div className="bg-white border border-[#E0E0E0] rounded-2xl px-8 py-10 text-center">
             <h2 className="text-2xl md:text-3xl font-extrabold text-[#004E92] mb-3">
@@ -150,6 +174,7 @@ const About = () => {
               href="https://www.youtube.com/@bankexpert"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackAboutSubscribeClicked("https://www.youtube.com/@bankexpert")}
               className="inline-flex items-center gap-2 bg-[#FF0000] hover:bg-[#CC0000] text-white font-bold px-8 py-4 rounded-xl text-base transition-colors"
             >
               <Youtube className="w-5 h-5" />

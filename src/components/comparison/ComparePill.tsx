@@ -5,11 +5,18 @@ import { X, ArrowRightLeft } from 'lucide-react';
 import { ComparePanel } from './ComparePanel';
 import { cn } from '@/lib/utils';
 import { getCardKey } from '@/utils/cardAlias';
+import { trackCompareNowClicked } from '@/services/journeyTrack';
 
 export function ComparePill() {
   const { selectedCards, removeCard, clearAll } = useComparison();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Open the comparison panel and fire the compare_now_clicked journey event
+  const openComparePanel = () => {
+    trackCompareNowClicked(selectedCards.map((c) => getCardKey(c)));
+    setIsPanelOpen(true);
+  };
 
   useEffect(() => {
     if (selectedCards.length > 0) {
@@ -20,10 +27,10 @@ export function ComparePill() {
   }, [selectedCards]);
 
   useEffect(() => {
-    const handleOpen = () => setIsPanelOpen(true);
+    const handleOpen = () => openComparePanel();
     window.addEventListener('openComparison', handleOpen);
     return () => window.removeEventListener('openComparison', handleOpen);
-  }, []);
+  }, [selectedCards]);
 
   if (!isVisible) return null;
 
@@ -92,9 +99,9 @@ export function ComparePill() {
           </div>
 
           {/* Compare Button */}
-          <Button 
+          <Button
             size="sm"
-            onClick={() => setIsPanelOpen(true)}
+            onClick={openComparePanel}
             className="mt-1 w-full bg-white hover:bg-white/90 text-primary font-semibold shadow-lg text-xs sm:text-sm h-9 rounded-xl"
           >
             <ArrowRightLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />

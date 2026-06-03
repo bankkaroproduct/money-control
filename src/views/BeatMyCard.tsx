@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { analytics } from "@/services/analytics";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,12 @@ import { toast } from "sonner";
 import { CardSearchDropdown } from "@/components/CardSearchDropdown";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { redirectToCardApplication } from "@/utils/redirectHandler";
+import { trackBmcApplyNowClicked, trackBmcPageView, trackBmcCardSelected, trackBmcSpendsFilled, trackBmcRevealCardClicked, trackBmcResultsView, trackBmcResultCardClicked, trackBmcResetClicked } from "@/services/journeyTrack";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import EligibilityDialog from "@/components/EligibilityDialog";
+import { getCardStatus, isApplyDisabled, CARD_STATUS_LABEL } from '@/utils/cardStatus';
 interface CategorySavings {
   category: string;
   emoji: string;
@@ -47,6 +49,8 @@ interface Card {
   network_url?: string;
   cg_network_url?: string;
   ck_store_url?: string;
+  sourceable?: boolean;
+  invite_only?: boolean;
 }
 interface SpendingBreakdownItem {
   on: string;
@@ -231,7 +235,9 @@ const BeatMyCard = () => {
   const [categorySavings, setCategorySavings] = useState<CategorySavings[]>([]);
   const [pendingApplyCard, setPendingApplyCard] = useState<any>(null);
   const [applyEligibilityDone, setApplyEligibilityDone] = useState(false);
+  const resultsViewTracked = useRef(false);
   useEffect(() => {
+    trackBmcPageView('beat_my_card');
     fetchCards();
   }, []);
   const fetchCards = async () => {
@@ -259,6 +265,7 @@ const BeatMyCard = () => {
   };
   const handleCardSelect = (card: Card) => {
     analytics.trackBeatStart(card.name);
+    trackBmcCardSelected(card.name, card.seo_card_alias);
     setSelectedCard(card);
     setStep('questions');
   };
@@ -295,12 +302,13 @@ const BeatMyCard = () => {
     }
     calculateResults();
   };
-  const handleApplyNow = (card: Card | null) => {
+  const handleApplyNow = async (card: Card | null) => {
     if (!card) return;
     analytics.trackCardAction('Apply Now', card.name);
     analytics.trackBeatSelect(card.name);
+    trackBmcApplyNowClicked(selectedCard?.name, card.seo_card_alias, card.name);
     if (applyEligibilityDone) {
-      redirectToCardApplication(card);
+      await redirectToCardApplication(card);
       return;
     }
     setPendingApplyCard(card);
@@ -310,6 +318,9 @@ const BeatMyCard = () => {
       toast.error("No card selected");
       return;
     }
+    trackBmcRevealCardClicked(selectedCard.name);
+    trackBmcSpendsFilled(responses);
+    resultsViewTracked.current = false;
     setIsCalculating(true);
     try {
       // Ensure all required fields are present with default value of 0
@@ -442,6 +453,10 @@ const BeatMyCard = () => {
           if (userCardData && geniusCardData) {
             const savingsDiff = (geniusCardData.annual_saving || 0) - (userCardData.annual_saving || 0);
             analytics.trackBeatCompare(userCardData.name, geniusCardData.name, savingsDiff);
+            if (!resultsViewTracked.current) {
+              trackBmcResultsView(userCardData.name, geniusCardData.name, savingsDiff);
+              resultsViewTracked.current = true;
+            }
           }
 
           setStep('results');
@@ -847,6 +862,7 @@ const BeatMyCard = () => {
               <Button
                 variant="outline"
                 onClick={() => {
+                  trackBmcResetClicked();
                   setStep('select');
                   setCurrentStep(0);
                   setResponses({});
@@ -927,6 +943,7 @@ const BeatMyCard = () => {
                 return (
                   <div
                     key={card.id || index}
+                    onClick={index === 1 ? () => trackBmcResultCardClicked(card.seo_card_alias, card.name) : undefined}
                     className={`relative bg-white border rounded-3xl p-6 shadow-lg transition-all ${isWinnerCard ? 'border-4 border-[#0B7A8A] shadow-[#E0F7F9] scale-[1.01]' : 'border-slate-100'
                       }`}
                   >
@@ -949,6 +966,11 @@ const BeatMyCard = () => {
                     <div className="space-y-1 text-center mb-6">
                       <p className="text-xs uppercase tracking-[0.3em] text-slate-400">{card.banks?.name || 'Credit Card'}</p>
                       <h3 className="text-2xl font-bold text-slate-900">{card.name}</h3>
+                      {index === 1 && getCardStatus(card) && (
+                        <Badge className="bg-[#F5F5F5] text-black hover:bg-[#F5F5F5] font-semibold">
+                          {CARD_STATUS_LABEL[getCardStatus(card)!]}
+                        </Badge>
+                      )}
                       {card.card_type && (
                         <span className="inline-flex items-center px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600">
                           {card.card_type}
@@ -1069,19 +1091,30 @@ const BeatMyCard = () => {
             {/* CTA */}
             <section className="bg-white border border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
               <div className="flex flex-col md:flex-row gap-4 items-center">
-                <Button
-                  size="lg"
-                  className="w-full md:flex-1 text-lg font-semibold bg-[#0B7A8A] hover:bg-[#085F6D] text-white hover:shadow-xl hover:scale-[1.01] transition"
-                  onClick={() => handleApplyNow(isUserWinner ? userCardData : geniusCardData)}
-                >
-                  Apply for {isUserWinner ? 'This Card' : 'Better Card'}
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
+                {isApplyDisabled(isUserWinner ? userCardData : geniusCardData) ? (
+                  <Button
+                    size="lg"
+                    disabled
+                    className="w-full md:flex-1 text-lg font-semibold bg-[#F5F5F5] text-black"
+                  >
+                    {CARD_STATUS_LABEL[getCardStatus(isUserWinner ? userCardData : geniusCardData)!]}
+                  </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    className="w-full md:flex-1 text-lg font-semibold bg-[#0B7A8A] hover:bg-[#085F6D] text-white hover:shadow-xl hover:scale-[1.01] transition"
+                    onClick={() => handleApplyNow(isUserWinner ? userCardData : geniusCardData)}
+                  >
+                    Apply for {isUserWinner ? 'This Card' : 'Better Card'}
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full md:w-auto text-lg"
                   onClick={() => {
+                    trackBmcResetClicked();
                     setStep('select');
                     setCurrentStep(0);
                     setResponses({});

@@ -15,9 +15,11 @@ import EligibilityDialog from '@/components/EligibilityDialog';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { feeCalc } from '@/lib/feeUtils';
 import { redirectToCardApplication } from '@/utils/redirectHandler';
+import { trackCardDetailsApplyNowClicked, trackCardDetailsPageView, trackCardDetailsBackClicked, trackCardDetailsBreadcrumbClicked, trackCardDetailsBenefitsViewed, trackCardDetailsCheckEligibilityClicked, trackCardDetailsCompareClicked } from '@/services/journeyTrack';
 import { CompareToggleIcon } from '@/components/comparison/CompareToggleIcon';
 import { ComparePanel } from '@/components/comparison/ComparePanel';
 import { useComparison } from '@/contexts/ComparisonContext';
+import { getCardStatus, isApplyDisabled, CARD_STATUS_LABEL } from '@/utils/cardStatus';
 
 interface CardData {
   id: number;
@@ -104,6 +106,8 @@ export default function CardDetails() {
   const feeStructureRef = useRef<HTMLDivElement>(null);
   const allBenefitsRef = useRef<HTMLDivElement>(null);
   const tncRef = useRef<HTMLDivElement>(null);
+  const pageViewTrackedRef = useRef(false);
+  const benefitsViewedTrackedRef = useRef(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -143,6 +147,34 @@ export default function CardDetails() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Fire page-view once after the card is successfully loaded
+  useEffect(() => {
+    if (card && !pageViewTrackedRef.current) {
+      pageViewTrackedRef.current = true;
+      trackCardDetailsPageView(card.seo_card_alias, card.name, card.banks?.name, 'direct');
+    }
+  }, [card]);
+
+  // Fire benefits-viewed once when the benefits section enters the viewport
+  useEffect(() => {
+    if (!card) return;
+    const target = benefitsRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !benefitsViewedTrackedRef.current) {
+          benefitsViewedTrackedRef.current = true;
+          trackCardDetailsBenefitsViewed(card.seo_card_alias);
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [card]);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>, sectionId: string) => {
     setActiveSection(sectionId);
@@ -211,11 +243,12 @@ export default function CardDetails() {
     }
   };
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!card) return;
     analytics.trackCardAction('Apply Now', card.name);
+    trackCardDetailsApplyNowClicked(card.seo_card_alias, card.name);
     if (eligibilitySubmitted) {
-      redirectToCardApplication(card);
+      await redirectToCardApplication(card);
       return;
     }
     setShowEligibilityDialog(true);
@@ -283,6 +316,7 @@ export default function CardDetails() {
             variant="outline"
             size="sm"
             onClick={() => {
+              trackCardDetailsBackClicked(card.seo_card_alias);
               router.push('/cards');
               setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
             }}
@@ -293,9 +327,9 @@ export default function CardDetails() {
           </Button>
         </div>
         <div className="text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Home</Link>
+          <Link to="/" className="hover:text-foreground" onClick={() => trackCardDetailsBreadcrumbClicked('Home', card.seo_card_alias)}>Home</Link>
           {' / '}
-          <Link to="/cards" className="hover:text-foreground">Cards</Link>
+          <Link to="/cards" className="hover:text-foreground" onClick={() => trackCardDetailsBreadcrumbClicked('Cards', card.seo_card_alias)}>Cards</Link>
           {' / '}
           <span className="text-foreground">{card.name}</span>
         </div>
@@ -334,6 +368,14 @@ export default function CardDetails() {
                   <Badge variant="secondary" className="text-sm">
                     {card.card_type}
                   </Badge>
+                  {(() => {
+                    const status = getCardStatus(card);
+                    return status ? (
+                      <Badge variant="secondary" className="text-sm bg-[#F5F5F5] text-black">
+                        {CARD_STATUS_LABEL[status]}
+                      </Badge>
+                    ) : null;
+                  })()}
                   {card.banks?.name && <span className="text-sm text-white/80">{card.banks.name}</span>}
                 </div>
               </div>
@@ -353,20 +395,31 @@ export default function CardDetails() {
 
               {/* CTAs */}
               <div className="flex gap-3 flex-wrap items-center">
-                <Button
-                  size="lg"
-                  onClick={handleApply}
-                  className="bg-white text-primary hover:bg-white/90 font-semibold"
-                >
-                  Apply Now
-                  <ExternalLink className="ml-2 w-4 h-4" />
-                </Button>
+                {isApplyDisabled(card) ? (
+                  <Button
+                    size="lg"
+                    disabled
+                    className="bg-white/80 text-primary font-semibold cursor-not-allowed"
+                  >
+                    {CARD_STATUS_LABEL[getCardStatus(card)!]}
+                  </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    onClick={handleApply}
+                    className="bg-white text-primary hover:bg-white/90 font-semibold"
+                  >
+                    Apply Now
+                    <ExternalLink className="ml-2 w-4 h-4" />
+                  </Button>
+                )}
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={() => {
                     setShowEligibilityDialog(true);
                     analytics.trackCardAction('Check Eligibility', card.name);
+                    trackCardDetailsCheckEligibilityClicked(card.seo_card_alias, card.name);
                     if (typeof window !== 'undefined' && (window as any).gtag) {
                       (window as any).gtag('event', 'eligibility_modal_open', {
                         card_alias: alias,
@@ -386,6 +439,7 @@ export default function CardDetails() {
                     startComparisonWith(card);
                     setIsComparePanelOpen(true);
                     analytics.trackCardAction('Compare', card.name);
+                    trackCardDetailsCompareClicked(card.seo_card_alias, card.name);
                   }}
                   className={isSelected(card.seo_card_alias)
                     ? "border border-white/50 text-white bg-white/20 hover:bg-white/30"
@@ -414,15 +468,25 @@ export default function CardDetails() {
       {showFixedCTA && (
         <div className="fixed bottom-0 left-0 right-0 bg-background/98 backdrop-blur-md border-t-2 border-border/80 p-3 sm:p-4 z-50 shadow-2xl safe-area-inset-bottom">
           <div className="container mx-auto px-3 sm:px-4 flex gap-2 sm:gap-3">
-            <Button
-              className="flex-1 touch-target h-12 sm:h-14 font-bold text-sm sm:text-base shadow-lg"
-              size="lg"
-              onClick={handleApply}
-            >
-              <span className="hidden xs:inline">Apply Now - Instant Decision</span>
-              <span className="xs:hidden">Apply Now</span>
-              <ExternalLink className="ml-1.5 sm:ml-2 w-4 h-4" />
-            </Button>
+            {isApplyDisabled(card) ? (
+              <Button
+                className="flex-1 touch-target h-12 sm:h-14 font-bold text-sm sm:text-base shadow-lg cursor-not-allowed"
+                size="lg"
+                disabled
+              >
+                {CARD_STATUS_LABEL[getCardStatus(card)!]}
+              </Button>
+            ) : (
+              <Button
+                className="flex-1 touch-target h-12 sm:h-14 font-bold text-sm sm:text-base shadow-lg"
+                size="lg"
+                onClick={handleApply}
+              >
+                <span className="hidden xs:inline">Apply Now - Instant Decision</span>
+                <span className="xs:hidden">Apply Now</span>
+                <ExternalLink className="ml-1.5 sm:ml-2 w-4 h-4" />
+              </Button>
+            )}
             <Button
               size="lg"
               variant={isSelected(card.seo_card_alias) ? "default" : "outline"}
@@ -430,6 +494,7 @@ export default function CardDetails() {
                 startComparisonWith(card);
                 setIsComparePanelOpen(true);
                 analytics.trackCardAction('Compare', card.name);
+                trackCardDetailsCompareClicked(card.seo_card_alias, card.name);
               }}
               className={`touch-target h-12 sm:h-14 px-4 sm:px-6 ${isSelected(card.seo_card_alias)
                 ? "border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg"
@@ -858,10 +923,16 @@ export default function CardDetails() {
             </div>
           </div>
           <div className="text-center">
-            <Button size="lg" onClick={handleApply} className="w-full sm:w-auto px-8 shadow-lg hover:shadow-xl transition-all touch-target">
-              Apply Now - Get Instant Decision
-              <ExternalLink className="ml-2 w-5 h-5" />
-            </Button>
+            {isApplyDisabled(card) ? (
+              <Button size="lg" disabled className="w-full sm:w-auto px-8 shadow-lg cursor-not-allowed">
+                {CARD_STATUS_LABEL[getCardStatus(card)!]}
+              </Button>
+            ) : (
+              <Button size="lg" onClick={handleApply} className="w-full sm:w-auto px-8 shadow-lg hover:shadow-xl transition-all touch-target">
+                Apply Now - Get Instant Decision
+                <ExternalLink className="ml-2 w-5 h-5" />
+              </Button>
+            )}
           </div>
         </section>
 
