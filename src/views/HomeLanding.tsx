@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Link } from "@/components/Link";
+import { getCardStatus } from "@/utils/cardStatus";
 import { authManager } from "@/services/authManager";
 import {
   trackHomePageView,
@@ -114,6 +115,13 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
   const networkList = card.networks
     ? card.networks.split(",").map((n) => n.trim()).filter(Boolean)
     : [];
+  const status = getCardStatus(card);
+
+  const statusConfig: Record<string, { label: string; bg: string; text: string }> = {
+    lifetime_free: { label: "LTF", bg: "bg-[#5BA42B]", text: "text-white" },
+    invite_only: { label: "Invite Only", bg: "bg-[#F59E0B]", text: "text-white" },
+    discontinued: { label: "Discontinued", bg: "bg-[#EF4444]", text: "text-white" },
+  };
 
   return (
     <div
@@ -129,14 +137,24 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
           className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
-        {index < 3 && (
-          <span
-            className="absolute top-3 right-3 font-lato text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 bg-[#1A6DA4] text-white"
-            style={{ borderRadius: "4px" }}
-          >
-            Top Pick
-          </span>
-        )}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+          {index < 3 && (
+            <span
+              className="font-lato text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 bg-[#1A6DA4] text-white"
+              style={{ borderRadius: "4px" }}
+            >
+              Top Pick
+            </span>
+          )}
+          {status && statusConfig[status] && (
+            <span
+              className={`font-lato text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 ${statusConfig[status].bg} ${statusConfig[status].text}`}
+              style={{ borderRadius: "4px" }}
+            >
+              {statusConfig[status].label}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="px-4 pt-3.5 pb-4">
@@ -465,98 +483,108 @@ const HomeLanding = () => {
       <main className="flex-1">
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-24 pb-0 md:pt-28" style={{ backgroundColor: "#0e2230" }}>
-          {/* Ambient glow */}
-          <div className="absolute top-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.07]" style={{ background: "radial-gradient(circle, #1A6DA4, transparent 70%)" }} />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #5BA42B, transparent 70%)" }} />
+          {/* Abstract background shapes */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="hero-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#1A6DA4" stopOpacity="0.12" />
+                <stop offset="100%" stopColor="#1A6DA4" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="hero-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#5BA42B" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="#5BA42B" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {/* Large angled plane top-right */}
+            <polygon points="600,0 1440,0 1440,500 900,300" fill="url(#hero-grad-1)" />
+            {/* Diagonal stripe */}
+            <polygon points="0,400 400,200 450,220 50,420" fill="url(#hero-grad-2)" />
+            {/* Floating ring top-right */}
+            <circle cx="85%" cy="18%" r="80" fill="none" stroke="#1A6DA4" strokeWidth="1" opacity="0.12" />
+            <circle cx="85%" cy="18%" r="60" fill="none" stroke="#1A6DA4" strokeWidth="0.5" opacity="0.08" />
+            {/* Small dot grid pattern */}
+            {[...Array(6)].map((_, row) =>
+              [...Array(8)].map((_, col) => (
+                <circle key={`dot-${row}-${col}`} cx={`${10 + col * 11}%`} cy={`${15 + row * 14}%`} r="1" fill="#fff" opacity="0.04" />
+              ))
+            )}
+            {/* Diamond shape bottom-left */}
+            <polygon points="120,500 180,440 240,500 180,560" fill="none" stroke="#5BA42B" strokeWidth="1" opacity="0.1" />
+            {/* Accent line */}
+            <line x1="60%" y1="0" x2="40%" y2="100%" stroke="#1A6DA4" strokeWidth="0.5" opacity="0.06" />
+            <line x1="62%" y1="0" x2="42%" y2="100%" stroke="#5BA42B" strokeWidth="0.5" opacity="0.04" />
+          </svg>
 
-          <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[70vh] md:min-h-[75vh] py-12 md:py-16">
-              {/* Left — copy */}
-              <div>
-                <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#5BA42B] mb-5 px-3 py-1.5 bg-[#5BA42B]/[0.1] border border-[#5BA42B]/20" style={{ borderRadius: "100px" }}>
-                  India's Trusted Card Advisor
-                </span>
+          {/* Radial glows */}
+          <div className="absolute top-[-20%] left-[50%] -translate-x-1/2 w-[60vw] h-[60vw] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, #1A6DA4, transparent 60%)" }} />
+          <div className="absolute bottom-[-30%] right-[-10%] w-[35vw] h-[35vw] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #5BA42B, transparent 60%)" }} />
 
-                <h1 className="font-montserrat text-[clamp(2rem,4.5vw,3.4rem)] font-extrabold text-white leading-[1.1] tracking-tight mb-5">
-                  Smart Credit Card
-                  <br />
-                  <span className="text-[#5BA42B]">Decisions,</span>{" "}
-                  <span className="text-white/60 font-light">Made Simple</span>
-                </h1>
+          <div className="relative z-10 max-w-[800px] mx-auto px-5 md:px-8 text-center py-16 md:py-24">
+            <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#5BA42B] mb-6 px-4 py-1.5 bg-[#5BA42B]/[0.1] border border-[#5BA42B]/20" style={{ borderRadius: "100px" }}>
+              India's Trusted Card Advisor
+            </span>
 
-                <p className="font-roboto text-base md:text-lg text-white/60 leading-[1.7] max-w-[46ch] mb-8">
-                  Data-driven recommendations across 130+ cards from 20+ banks. No bias. No spam. Just the cards that work for you.
-                </p>
+            <h1 className="font-montserrat text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold text-white leading-[1.08] tracking-tight mb-5">
+              Smart Credit Card
+              <br />
+              <span className="text-[#5BA42B]">Decisions,</span>{" "}
+              <span className="text-white/50 font-light">Made Simple</span>
+            </h1>
 
-                {/* Search bar */}
-                <div className="max-w-md">
-                  <div
-                    className="flex items-center bg-white overflow-hidden shadow-2xl shadow-black/20"
-                    style={{ borderRadius: "12px" }}
-                  >
-                    <div className="relative flex-1">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#aaa]" />
-                      <input
-                        value={query}
-                        onChange={(e) => { setQuery(e.target.value); trackSearchQueryTyped(e.target.value); }}
-                        onFocus={() => trackHeroSearchBarFocused()}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Search cards or banks..."
-                        className="w-full pl-11 pr-3 h-13 text-sm text-[#1a1a2e] bg-transparent outline-none placeholder:text-[#bbb] font-roboto"
-                        style={{ height: "52px" }}
-                      />
-                    </div>
-                    <button
-                      onClick={handleSearch}
-                      className="h-10 px-5 mr-1.5 font-lato text-xs font-bold tracking-wider uppercase text-white bg-[#1A6DA4] hover:bg-[#155d8c] transition-colors flex-shrink-0"
-                      style={{ borderRadius: "8px" }}
-                    >
-                      Search
-                    </button>
-                  </div>
+            <p className="font-roboto text-base md:text-lg text-white/50 leading-[1.7] max-w-[52ch] mx-auto mb-10">
+              Data-driven recommendations across 130+ cards from 20+ banks. No bias. No spam. Just the cards that work for you.
+            </p>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {["HDFC", "SBI", "Axis", "ICICI"].map((bank) => (
-                      <button
-                        key={bank}
-                        className="px-3 py-1.5 font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
-                        style={{ borderRadius: "100px" }}
-                        onClick={() => {
-                          setQuery(bank);
-                          trackSearchQueryTyped(bank);
-                        }}
-                      >
-                        {bank}
-                      </button>
-                    ))}
-                  </div>
+            {/* Search bar */}
+            <div className="max-w-lg mx-auto">
+              <div
+                className="flex items-center bg-white overflow-hidden shadow-2xl shadow-black/20"
+                style={{ borderRadius: "12px" }}
+              >
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#aaa]" />
+                  <input
+                    value={query}
+                    onChange={(e) => { setQuery(e.target.value); trackSearchQueryTyped(e.target.value); }}
+                    onFocus={() => trackHeroSearchBarFocused()}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Search cards or banks..."
+                    className="w-full pl-11 pr-3 h-13 text-sm text-[#1a1a2e] bg-transparent outline-none placeholder:text-[#bbb] font-roboto"
+                    style={{ height: "52px" }}
+                  />
                 </div>
+                <button
+                  onClick={handleSearch}
+                  className="h-10 px-5 mr-1.5 font-lato text-xs font-bold tracking-wider uppercase text-white bg-[#1A6DA4] hover:bg-[#155d8c] transition-colors flex-shrink-0"
+                  style={{ borderRadius: "8px" }}
+                >
+                  Search
+                </button>
               </div>
 
-              {/* Right — stat cards bento */}
-              <div className="hidden lg:block">
-                <div className="grid grid-cols-2 gap-4">
-                  {STATS.map((s, i) => (
-                    <div
-                      key={s.label}
-                      className="bg-white/[0.06] border border-white/[0.08] backdrop-blur-sm p-5 hover:bg-white/[0.1] transition-all duration-300"
-                      style={{ borderRadius: "14px" }}
-                    >
-                      <s.icon className="h-5 w-5 text-[#5BA42B] mb-3" />
-                      <span className="block font-montserrat text-3xl font-bold text-white mb-1">{s.value}</span>
-                      <span className="block font-roboto text-xs text-white/50">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {["HDFC", "SBI", "Axis", "ICICI"].map((bank) => (
+                  <button
+                    key={bank}
+                    className="px-3 py-1.5 font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
+                    style={{ borderRadius: "100px" }}
+                    onClick={() => {
+                      setQuery(bank);
+                      trackSearchQueryTyped(bank);
+                    }}
+                  >
+                    {bank}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Mobile stats row */}
-            <div className="lg:hidden grid grid-cols-4 gap-0 border-t border-white/[0.08]">
+            {/* Stats strip */}
+            <div className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x md:divide-white/[0.08]">
               {STATS.map((s) => (
-                <div key={s.label} className="flex flex-col items-center text-center py-5">
-                  <span className="font-montserrat text-lg font-bold text-white">{s.value}</span>
-                  <span className="font-roboto text-[10px] text-white/40 mt-0.5">{s.label}</span>
+                <div key={s.label} className="flex flex-col items-center py-3">
+                  <span className="font-montserrat text-2xl md:text-3xl font-bold text-white">{s.value}</span>
+                  <span className="font-roboto text-[11px] text-white/40 mt-1">{s.label}</span>
                 </div>
               ))}
             </div>
