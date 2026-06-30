@@ -96,7 +96,7 @@ const ExpertPicks = () => {
           </p>
           <h2
             className="text-3xl md:text-4xl font-extrabold tracking-tight"
-            style={{ color: "#004E92" }}
+            style={{ color: "#1A6DA4" }}
           >
             {brandConfig.name}'s Top Card Picks
           </h2>
@@ -114,7 +114,7 @@ const ExpertPicks = () => {
                 style={{
                   background: "#F5F5F5",
                   border: "1px solid #B8D4EE",
-                  borderLeftColor: "#004E92",
+                  borderLeftColor: "#1A6DA4",
                   borderLeftWidth: "4px",
                 }}
               >
@@ -122,7 +122,7 @@ const ExpertPicks = () => {
                 <div className="flex items-center justify-between px-4 pt-4 pb-2">
                   <span
                     className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                    style={{ backgroundColor: "#004E92", color: "#FFFFFF" }}
+                    style={{ backgroundColor: "#1A6DA4", color: "#FFFFFF" }}
                   >
                     {card.tag}
                   </span>
@@ -146,7 +146,7 @@ const ExpertPicks = () => {
                 <div className="px-4 py-2 flex-1">
                   <h3
                     className="text-base font-bold leading-tight"
-                    style={{ color: "#004E92" }}
+                    style={{ color: "#1A6DA4" }}
                   >
                     {card.name}
                   </h3>
@@ -161,8 +161,8 @@ const ExpertPicks = () => {
                     to={card.alias ? `/cards/${card.alias}` : "/cards"}
                     className="w-full text-center text-sm font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-1"
                     style={{
-                      border: "1px solid #004E92",
-                      color: "#004E92",
+                      border: "1px solid #1A6DA4",
+                      color: "#1A6DA4",
                       backgroundColor: "transparent",
                     }}
                   >
@@ -178,7 +178,7 @@ const ExpertPicks = () => {
             <button
               onClick={prev}
               className="h-11 w-11 rounded-full flex items-center justify-center transition-colors"
-              style={{ border: "1px solid #004E92", color: "#004E92", backgroundColor: "transparent" }}
+              style={{ border: "1px solid #1A6DA4", color: "#1A6DA4", backgroundColor: "transparent" }}
               aria-label="Previous"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -186,7 +186,7 @@ const ExpertPicks = () => {
             <button
               onClick={next}
               className="h-11 w-11 rounded-full flex items-center justify-center transition-colors"
-              style={{ backgroundColor: "#004E92", color: "white" }}
+              style={{ backgroundColor: "#1A6DA4", color: "white" }}
               aria-label="Next"
             >
               <ChevronRight className="h-5 w-5" />

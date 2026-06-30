@@ -64,7 +64,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#E0F7F9] pt-28 sm:pt-32 pb-12 sm:pb-16 lg:pb-20 min-h-[85vh] sm:min-h-screen flex items-center">
+    <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f3f8fc] pt-28 sm:pt-32 pb-12 sm:pb-16 lg:pb-20 min-h-[85vh] sm:min-h-screen flex items-center">
       {/* Animated Background Elements with Parallax */}
       <div ref={floatingElementsRef} className="absolute inset-0 overflow-hidden pointer-events-none opacity-40 sm:opacity-100">
         {[...Array(5)].map((_, i) => (

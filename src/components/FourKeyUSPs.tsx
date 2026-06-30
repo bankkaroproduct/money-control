@@ -83,7 +83,7 @@ const FourKeyUSPs = () => {
   const features = [
     {
       icon: CardWithTags,
-      iconColor: "bg-[#004E92]",
+      iconColor: "bg-[#1A6DA4]",
       title: "Category Card Genius",
       description: "AI Powered tool to find the best card by category for your spends",
       cta: "Get Started",
@@ -91,7 +91,7 @@ const FourKeyUSPs = () => {
     },
     {
       icon: MagicWandSparkles,
-      iconColor: "bg-[#004E92]",
+      iconColor: "bg-[#1A6DA4]",
       title: "Super Card Genius",
       description: "AI Powered tool to find the best card for YOU!",
       cta: "Get Started",
@@ -99,7 +99,7 @@ const FourKeyUSPs = () => {
     },
     {
       icon: Target,
-      iconColor: "bg-[#004E92]",
+      iconColor: "bg-[#1A6DA4]",
       title: "Beat My Card",
       description: "Test our Card Genius AI v/s Your Card. See the magic!",
       cta: "Get Started",
@@ -107,7 +107,7 @@ const FourKeyUSPs = () => {
     },
     {
       icon: StackedCards,
-      iconColor: "bg-[#004E92]",
+      iconColor: "bg-[#1A6DA4]",
       title: "Browse All Cards",
       description: "Browse all cards with clear benefits, fees, and features in one place.",
       cta: "Get Started",
@@ -137,7 +137,7 @@ const FourKeyUSPs = () => {
                   setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
                 }}
                 className="feature-card rounded-xl sm:rounded-2xl shadow-card p-4 sm:p-6 md:p-8 flex flex-col items-center text-center cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 sm:hover:-translate-y-2 group h-full touch-target border-l-4"
-                style={{ backgroundColor: "#F5F5F5", borderLeftColor: "#004E92" }}
+                style={{ backgroundColor: "#F5F5F5", borderLeftColor: "#1A6DA4" }}
               >
                 {/* Circular Icon */}
                 <div className={`w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full ${feature.iconColor} flex items-center justify-center mb-3 sm:mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300`}>
@@ -145,7 +145,7 @@ const FourKeyUSPs = () => {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 min-h-[2.5rem] sm:min-h-[3rem] flex items-center px-1" style={{ color: "#004E92" }}>
+                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-2 sm:mb-3 min-h-[2.5rem] sm:min-h-[3rem] flex items-center px-1" style={{ color: "#1A6DA4" }}>
                   {feature.title}
                 </h3>
 

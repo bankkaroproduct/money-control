@@ -47,7 +47,7 @@ const BlogsGrid = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                 selectedCategory === cat
-                  ? "bg-[#004E92] text-white"
+                  ? "bg-[#1A6DA4] text-white"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >
@@ -68,7 +68,7 @@ const BlogsGrid = () => {
       {featured && (
         <div
           onClick={() => router.push(`/blogs/${featured.slug}`)}
-          className="group mb-10 cursor-pointer grid grid-cols-1 lg:grid-cols-2 gap-0 bg-card rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl hover:border-[#004E92]/30 transition-all duration-300"
+          className="group mb-10 cursor-pointer grid grid-cols-1 lg:grid-cols-2 gap-0 bg-card rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl hover:border-[#1A6DA4]/30 transition-all duration-300"
         >
           <div className="relative h-56 sm:h-72 lg:h-full min-h-[220px] overflow-hidden">
             <img
@@ -83,10 +83,10 @@ const BlogsGrid = () => {
           </div>
 
           <div className="p-6 sm:p-8 flex flex-col justify-center">
-            <div className="inline-flex items-center gap-1.5 text-xs text-[#004E92] font-semibold uppercase tracking-wide mb-3">
+            <div className="inline-flex items-center gap-1.5 text-xs text-[#1A6DA4] font-semibold uppercase tracking-wide mb-3">
               Featured Article
             </div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-3 group-hover:text-[#004E92] transition-colors leading-tight">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-3 group-hover:text-[#1A6DA4] transition-colors leading-tight">
               {featured.title}
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-4 line-clamp-3">
@@ -112,7 +112,7 @@ const BlogsGrid = () => {
               ))}
             </div>
 
-            <div className="flex items-center gap-2 text-[#004E92] font-semibold text-sm group-hover:gap-3 transition-all">
+            <div className="flex items-center gap-2 text-[#1A6DA4] font-semibold text-sm group-hover:gap-3 transition-all">
               Read Article
               <ArrowRight className="w-4 h-4" />
             </div>
@@ -127,7 +127,7 @@ const BlogsGrid = () => {
             <div
               key={blog.id}
               onClick={() => router.push(`/blogs/${blog.slug}`)}
-              className="group bg-card rounded-2xl overflow-hidden border border-border/50 shadow hover:shadow-xl hover:border-[#004E92]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col"
+              className="group bg-card rounded-2xl overflow-hidden border border-border/50 shadow hover:shadow-xl hover:border-[#1A6DA4]/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col"
             >
               <div className="relative h-48 overflow-hidden flex-shrink-0">
                 <img
@@ -153,7 +153,7 @@ const BlogsGrid = () => {
                   </div>
                 </div>
 
-                <h3 className="font-bold text-foreground group-hover:text-[#004E92] transition-colors mb-2 leading-snug line-clamp-2 flex-1">
+                <h3 className="font-bold text-foreground group-hover:text-[#1A6DA4] transition-colors mb-2 leading-snug line-clamp-2 flex-1">
                   {blog.title}
                 </h3>
 
@@ -163,7 +163,7 @@ const BlogsGrid = () => {
 
                 <div className="flex items-center justify-between pt-3 border-t border-border/50 mt-auto">
                   <span className="text-xs font-semibold text-foreground">{blog.author}</span>
-                  <div className="flex items-center gap-1 text-[#004E92] text-xs font-semibold group-hover:gap-1.5 transition-all">
+                  <div className="flex items-center gap-1 text-[#1A6DA4] text-xs font-semibold group-hover:gap-1.5 transition-all">
                     Read
                     <ArrowRight className="w-3 h-3" />
                   </div>

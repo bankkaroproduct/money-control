@@ -605,13 +605,13 @@ const CardGenius = () => {
             Back to all recommendations
           </button>
 
-          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#F5F5F5] via-[#F5F5F5] to-[#F5F5F5] text-[#002D57] p-6 sm:p-8 shadow-2xl flex flex-col gap-6 sm:flex-row sm:items-center">
+          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#F5F5F5] via-[#F5F5F5] to-[#F5F5F5] text-[#104b72] p-6 sm:p-8 shadow-2xl flex flex-col gap-6 sm:flex-row sm:items-center">
             <button onClick={() => setSelectedCard(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
               <X className="w-5 h-5" />
             </button>
             <div className="space-y-3 max-w-xl">
               {bankLabel && (
-                <p className="text-xs uppercase tracking-[0.4em] text-[#002D57]/70">
+                <p className="text-xs uppercase tracking-[0.4em] text-[#104b72]/70">
                   {bankLabel}
                 </p>
               )}
@@ -623,7 +623,7 @@ const CardGenius = () => {
                   </span>
                 )}
               </h1>
-              <p className="text-sm text-[#002D57]/80">Best card curated using your spends of ₹{(totalAnnualSpend / 100000).toFixed(2)}L annually.</p>
+              <p className="text-sm text-[#104b72]/80">Best card curated using your spends of ₹{(totalAnnualSpend / 100000).toFixed(2)}L annually.</p>
             </div>
             <div className="flex justify-center sm:justify-end w-full sm:w-auto">
               <img
@@ -665,12 +665,12 @@ const CardGenius = () => {
                 <p className="text-xl font-semibold text-foreground">{userDomesticLoungeVisits + userInternationalLoungeVisits}</p>
               </div>
             </div>}
-            <div className="rounded-2xl bg-[#F5F5F5] border border-[#004E92] px-4 py-3 flex items-center justify-between">
+            <div className="rounded-2xl bg-[#F5F5F5] border border-[#1A6DA4] px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-[#004E92]">Your Net Savings</p>
-                <p className="text-3xl font-bold text-[#004E92]">₹{Math.round(selectedCard.net_savings).toLocaleString()}</p>
+                <p className="text-xs uppercase tracking-wide text-[#1A6DA4]">Your Net Savings</p>
+                <p className="text-3xl font-bold text-[#1A6DA4]">₹{Math.round(selectedCard.net_savings).toLocaleString()}</p>
               </div>
-              <span className="text-xs text-[#004E92]/70">per year</span>
+              <span className="text-xs text-[#1A6DA4]/70">per year</span>
             </div>
           </div>
 
@@ -765,7 +765,7 @@ const CardGenius = () => {
                 </div>}
                 <div className="flex justify-between items-center pt-3 border-t border-slate-200">
                   <span className="font-semibold text-foreground">Total Savings</span>
-                  <span className="text-2xl font-bold text-[#004E92]">₹{Math.round(savings).toLocaleString()}</span>
+                  <span className="text-2xl font-bold text-[#1A6DA4]">₹{Math.round(savings).toLocaleString()}</span>
                 </div>
                 {details.explanation && details.explanation.length > 0 && <div className="rounded-2xl bg-white border border-slate-200 p-4 space-y-2">
                   <p className="text-xs uppercase tracking-wide text-primary">How it's calculated</p>
@@ -1018,7 +1018,7 @@ const CardGenius = () => {
                     </p>
                     <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                       Net Savings
-                      <span className="font-semibold text-[#004E92] text-sm">
+                      <span className="font-semibold text-[#1A6DA4] text-sm">
                         ₹{Math.round(card.net_savings).toLocaleString()}
                       </span>
                     </p>
@@ -1035,19 +1035,19 @@ const CardGenius = () => {
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="bg-muted/40 rounded-xl p-3">
                       <p className="text-xs text-muted-foreground">Total Savings</p>
-                      <p className="text-base font-semibold text-[#004E92]">
+                      <p className="text-base font-semibold text-[#1A6DA4]">
                         ₹{Math.round(card.total_savings_yearly).toLocaleString()}
                       </p>
                     </div>
                     <div className="bg-muted/40 rounded-xl p-3">
                       <p className="text-xs text-muted-foreground">Milestones</p>
-                      <p className="text-base font-semibold text-[#004E92]">
+                      <p className="text-base font-semibold text-[#1A6DA4]">
                         ₹{Math.round(card.total_extra_benefits).toLocaleString()}
                       </p>
                     </div>
                     <div className="bg-muted/40 rounded-xl p-3">
                       <p className="text-xs text-muted-foreground">Lounge Value</p>
-                      <p className="text-base font-semibold text-[#004E92]">
+                      <p className="text-base font-semibold text-[#1A6DA4]">
                         {card.airport_lounge_value > 0
                           ? `₹${Math.round(card.airport_lounge_value).toLocaleString()}`
                           : '—'}
@@ -1077,7 +1077,7 @@ const CardGenius = () => {
 
                 <div className="flex flex-wrap gap-2">
                   {card.joining_fees === 0 && card.annual_fees === 0 && (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#F5F5F5] text-[#004E92]">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#F5F5F5] text-[#1A6DA4]">
                       Lifetime Free
                     </span>
                   )}
@@ -1465,15 +1465,15 @@ const CardGenius = () => {
 
                           {/* Quick Insights Tab - Show summary data */}
                           {activeTab === 'quick' && <>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               ₹{card.total_savings_yearly.toLocaleString()}
                             </td>
                             <td className="p-4"></td>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               ₹{card.total_extra_benefits.toLocaleString()}
                             </td>
                             <td className="p-4"></td>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               {card.airport_lounge_value && card.airport_lounge_value > 0
                                 ? `₹${card.airport_lounge_value.toLocaleString()}`
                                 : '—'}
@@ -1489,7 +1489,7 @@ const CardGenius = () => {
                             </td>
                             <td className="p-4"></td>
                             <td className="p-4 text-center">
-                              <span className="font-bold text-lg text-[#004E92]">
+                              <span className="font-bold text-lg text-[#1A6DA4]">
                                 ₹{card.net_savings.toLocaleString()}
                               </span>
                             </td>
@@ -1501,7 +1501,7 @@ const CardGenius = () => {
                               const breakdown = card.spending_breakdown[category];
                               const yearlySavings = breakdown?.savings ? breakdown.savings * 12 : 0;
                               return <React.Fragment key={category}>
-                                <td className="p-4 text-center font-semibold text-[#004E92]">
+                                <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                                   ₹{yearlySavings.toLocaleString()}
                                 </td>
                                 {idx < spendingCategories.length - 1 && <td className="p-4"></td>}
@@ -1512,28 +1512,28 @@ const CardGenius = () => {
                             {(domesticLoungeValue > 0 || internationalLoungeValue > 0) && <>
                               {domesticLoungeValue > 0 && <>
                                 <td className="p-4"></td>
-                                <td className="p-4 text-center font-semibold text-[#004E92]">
+                                <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                                   ₹{(card.domestic_lounge_value || 0).toLocaleString()}
                                 </td>
                               </>}
                               {internationalLoungeValue > 0 && <>
                                 <td className="p-4"></td>
-                                <td className="p-4 text-center font-semibold text-[#004E92]">
+                                <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                                   ₹{(card.international_lounge_value || 0).toLocaleString()}
                                 </td>
                               </>}
                             </>}
 
                             <td className="p-4"></td>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               ₹{card.total_savings_yearly.toLocaleString()}
                             </td>
                             <td className="p-4"></td>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               ₹{card.total_extra_benefits.toLocaleString()}
                             </td>
                             <td className="p-4"></td>
-                            <td className="p-4 text-center font-semibold text-[#004E92]">
+                            <td className="p-4 text-center font-semibold text-[#1A6DA4]">
                               {card.airport_lounge_value && card.airport_lounge_value > 0
                                 ? `₹${card.airport_lounge_value.toLocaleString()}`
                                 : '—'}
@@ -1549,7 +1549,7 @@ const CardGenius = () => {
                             </td>
                             <td className="p-4"></td>
                             <td className="p-4 text-center">
-                              <span className="font-bold text-lg text-[#004E92]">
+                              <span className="font-bold text-lg text-[#1A6DA4]">
                                 ₹{card.net_savings.toLocaleString()}
                               </span>
                             </td>

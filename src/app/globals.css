@@ -18,23 +18,23 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
     
-    /* Blue - Primary Brand */
-    --mc-green-50: 210 100% 97%;
-    --mc-green-100: 210 100% 95%;
-    --mc-green-200: 210 100% 90%;
-    --mc-green-500: 210 100% 40%;
-    --mc-green-600: 210 100% 32%;
-    --mc-green-700: 210 100% 24%;
-    --mc-green-900: 210 100% 13%;
+    /* Moneycontrol Brand Blue #1A6DA4 */
+    --mc-green-50: 204 72% 97%;
+    --mc-green-100: 204 72% 94%;
+    --mc-green-200: 204 72% 86%;
+    --mc-green-500: 204 72% 37%;
+    --mc-green-600: 204 72% 28%;
+    --mc-green-700: 204 72% 24%;
+    --mc-green-900: 204 60% 16%;
 
-    /* Primary (Blue) */
-    --primary: 210 100% 40%;
+    /* Primary (Moneycontrol Blue #1A6DA4) */
+    --primary: 204 72% 37%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 55%;
+    --primary-glow: 204 72% 50%;
 
-    /* Secondary */
-    --secondary: 210 60% 95%;
-    --secondary-foreground: 210 100% 24%;
+    /* Secondary (Moneycontrol Green #5BA42B) */
+    --secondary: 97 58% 95%;
+    --secondary-foreground: 97 58% 25%;
     
     /* Charcoal - Text Colors */
     --charcoal-50: 210 40% 98%;
@@ -47,9 +47,9 @@ All colors MUST be HSL.
     --charcoal-900: 220 13% 10%;
     
     /* Semantic Colors */
-    --success-50: 210 100% 97%;
-    --success-500: 210 100% 40%;
-    --success-700: 210 100% 24%;
+    --success-50: 97 58% 97%;
+    --success-500: 97 58% 40%;
+    --success-700: 97 58% 25%;
     
     --warning-50: 48 100% 96%;
     --warning-500: 38 92% 50%;
@@ -64,26 +64,26 @@ All colors MUST be HSL.
     --info-700: 217 83% 48%;
     
     /* UI Tokens */
-    --muted: 210 40% 96%;
+    --muted: 204 30% 96%;
     --muted-foreground: 215 16% 47%;
-    
-    --accent: 210 100% 97%;
-    --accent-foreground: 210 80% 35%;
+
+    --accent: 204 72% 97%;
+    --accent-foreground: 204 60% 35%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 210 100% 40%;
+    --ring: 204 72% 37%;
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 100% 97%));
-    --gradient-accent: linear-gradient(135deg, hsl(210 100% 40%), hsl(210 100% 55%));
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 100% 97%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(204 72% 97%));
+    --gradient-accent: linear-gradient(135deg, hsl(204 72% 37%), hsl(204 72% 50%));
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%), hsl(204 72% 97%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(204 30% 98%));
     --gradient-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
     
@@ -93,7 +93,7 @@ All colors MUST be HSL.
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.15);
     --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.2);
     --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
-    --shadow-glow: 0 0 30px hsl(210 100% 40% / 0.3);
+    --shadow-glow: 0 0 30px hsl(204 72% 37% / 0.3);
     --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.04);
     --shadow-card-hover: 0 12px 32px hsl(0 0% 0% / 0.12);
     
@@ -134,24 +134,24 @@ All colors MUST be HSL.
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 65%;
+    --primary: 204 72% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 60% 25%;
-    --secondary-foreground: 210 100% 95%;
+    --secondary: 97 58% 25%;
+    --secondary-foreground: 97 58% 95%;
 
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
     --accent: 217 33% 17%;
-    --accent-foreground: 210 100% 65%;
+    --accent-foreground: 204 72% 55%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217 33% 17%;
     --input: 217 33% 17%;
-    --ring: 210 100% 65%;
+    --ring: 204 72% 55%;
   }
 }
 
@@ -641,8 +641,8 @@ All colors MUST be HSL.
     .cg-prev-btn {
       margin-bottom: 16px;
       border-width: 1px;
-      border-color: #004E92;
-      color: #004E92;
+      border-color: #1A6DA4;
+      color: #1A6DA4;
       background-color: transparent;
     }
 
@@ -672,17 +672,17 @@ All colors MUST be HSL.
 
     .cg-next-btn {
       margin-top: 20px;
-      background-color: #004E92;
+      background-color: #1A6DA4;
       color: #ffffff;
-      border-color: #004E92;
+      border-color: #1A6DA4;
     }
 
     .cg-next-btn:hover {
-      background-color: #003A6E;
+      background-color: #155d8c;
     }
 
     .cg-next-btn:active {
-      background-color: #002D57;
+      background-color: #104b72;
     }
 
     .cg-skip-question-link {
@@ -756,8 +756,20 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  .font-playfair {
-    font-family: var(--font-playfair), Georgia, serif;
+  .font-lato {
+    font-family: var(--font-lato), 'Lato', sans-serif;
+  }
+
+  .font-montserrat {
+    font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  }
+
+  .font-roboto {
+    font-family: var(--font-roboto), 'Roboto', sans-serif;
+  }
+
+  .font-lora {
+    font-family: var(--font-lora), 'Lora', serif;
   }
 
   .fluid-h1 {
@@ -804,15 +816,19 @@ All colors MUST be HSL.
 }
 
 /* ============================================
-   BankExpert Brand Color Variables
-   Primary: #004E92  →  HSL 208 100% 28.6%
-   Secondary: #F5F5F5 →  HSL 0 0% 96.1%
-   Accent: #FFFFFF   →  HSL 0 0% 100%
+   Moneycontrol Brand Color Variables
+   Primary Blue: #1A6DA4  →  HSL 204 72% 37%
+   Primary Green: #5BA42B →  HSL 97 58% 40%
+   UI Green: #52B974     →  HSL 145 42% 52%
+   Alert Red: #E3515C    →  HSL 356 73% 60%
    ============================================ */
 :root {
-  --bankexpert-primary: 208 100% 28.6%;
-  --bankexpert-primary-light: 208 100% 40%;
-  --bankexpert-primary-dark: 208 100% 18%;
-  --bankexpert-secondary: 0 0% 96.1%;
-  --bankexpert-accent: 0 0% 100%;
+  --bankexpert-primary: 204 72% 37%;
+  --bankexpert-primary-light: 204 72% 50%;
+  --bankexpert-primary-dark: 204 72% 24%;
+  --bankexpert-secondary: 97 58% 95%;
+  --bankexpert-accent: 97 58% 40%;
+  --mc-brand-green: 97 58% 40%;
+  --mc-ui-green: 145 42% 52%;
+  --mc-alert-red: 356 73% 60%;
 }

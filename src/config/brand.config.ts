@@ -24,20 +24,20 @@ export interface BrandConfig {
 }
 
 export const brandConfig: BrandConfig = {
-  name: process.env.NEXT_PUBLIC_BRAND_NAME || 'BankExpert',
-  tagline: process.env.NEXT_PUBLIC_BRAND_TAGLINE || 'Find Your Perfect Credit Card',
-  logo: process.env.NEXT_PUBLIC_BRAND_LOGO || '/bankexpert-logo.png',
-  favicon: process.env.NEXT_PUBLIC_BRAND_FAVICON || '/bankexpert-logo.png',
-  email: 'bankexpert@wwdc.in',
+  name: process.env.NEXT_PUBLIC_BRAND_NAME || 'Moneycontrol',
+  tagline: process.env.NEXT_PUBLIC_BRAND_TAGLINE || 'Smart Credit Card Decisions',
+  logo: process.env.NEXT_PUBLIC_BRAND_LOGO || '/moneycontrol-logo.svg',
+  favicon: process.env.NEXT_PUBLIC_BRAND_FAVICON || '/favicon.png',
+  email: process.env.NEXT_PUBLIC_BRAND_EMAIL || 'support@moneycontrol.com',
   analyticsId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '',
-  headerBgColor: process.env.NEXT_PUBLIC_HEADER_BG_COLOR || '#004E92',
+  headerBgColor: process.env.NEXT_PUBLIC_HEADER_BG_COLOR || '#0e2230',
   colors: {
-    primaryHue: process.env.NEXT_PUBLIC_PRIMARY_HUE || '208',
-    primarySaturation: process.env.NEXT_PUBLIC_PRIMARY_SAT || '100%',
-    primaryLightness: process.env.NEXT_PUBLIC_PRIMARY_LIGHT || '28.6%',
-    secondaryHue: process.env.NEXT_PUBLIC_SECONDARY_HUE || '0',
-    secondarySaturation: process.env.NEXT_PUBLIC_SECONDARY_SAT || '0%',
-    secondaryLightness: process.env.NEXT_PUBLIC_SECONDARY_LIGHT || '96.1%',
+    primaryHue: process.env.NEXT_PUBLIC_PRIMARY_HUE || '204',
+    primarySaturation: process.env.NEXT_PUBLIC_PRIMARY_SAT || '72.4%',
+    primaryLightness: process.env.NEXT_PUBLIC_PRIMARY_LIGHT || '37.3%',
+    secondaryHue: process.env.NEXT_PUBLIC_SECONDARY_HUE || '97',
+    secondarySaturation: process.env.NEXT_PUBLIC_SECONDARY_SAT || '58.3%',
+    secondaryLightness: process.env.NEXT_PUBLIC_SECONDARY_LIGHT || '40.2%',
   }
 };
 

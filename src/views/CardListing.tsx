@@ -762,7 +762,7 @@ const CardListing = () => {
           label: 'Travel',
           icon: Plane
         }].map(cat => <label key={cat.id} className="filter-option flex items-center gap-3 cursor-pointer px-3 py-3 transition-all touch-target">
-          <input type="radio" name="category" className="accent-[#004E92] w-5 h-5" checked={filters.category === cat.id} onChange={() => handleFilterChange('category', cat.id)} />
+          <input type="radio" name="category" className="accent-[#1A6DA4] w-5 h-5" checked={filters.category === cat.id} onChange={() => handleFilterChange('category', cat.id)} />
           <cat.icon className="w-4 h-4 text-muted-foreground" />
           <span className="text-sm flex-1">{cat.label}</span>
         </label>)}
@@ -795,7 +795,7 @@ const CardListing = () => {
           label: '₹5,001+',
           value: '5001+'
         }].map(fee => <label key={fee.value} className="filter-option flex items-center gap-3 cursor-pointer px-3 py-3 transition-all touch-target">
-          <input type="radio" name="annualFee" className="accent-[#004E92] w-5 h-5" checked={filters.annualFees === fee.value} onChange={() => handleFilterChange('annualFees', fee.value)} />
+          <input type="radio" name="annualFee" className="accent-[#1A6DA4] w-5 h-5" checked={filters.annualFees === fee.value} onChange={() => handleFilterChange('annualFees', fee.value)} />
           <span className="text-sm">{fee.label}</span>
         </label>)}
       </CollapsibleContent>
@@ -819,7 +819,7 @@ const CardListing = () => {
               <input 
                 type="radio" 
                 name="creditScore" 
-                className="accent-[#004E92]"
+                className="accent-[#1A6DA4]"
                 checked={filters.credit_score === score.value}
                 onChange={() => handleFilterChange('credit_score', score.value)}
               />
@@ -837,7 +837,7 @@ const CardListing = () => {
       </CollapsibleTrigger>
       <CollapsibleContent className="pt-2 space-y-2 pl-1">
         {['VISA', 'Mastercard', 'RuPay', 'AmericanExpress'].map(network => <label key={network} className="filter-option flex items-center gap-3 cursor-pointer px-3 py-3 transition-all touch-target">
-          <input type="checkbox" className="accent-[#004E92] w-5 h-5" checked={filters.card_networks.includes(network)} onChange={e => {
+          <input type="checkbox" className="accent-[#1A6DA4] w-5 h-5" checked={filters.card_networks.includes(network)} onChange={e => {
             if (e.target.checked) {
               trackFilterNetworkSelected(network);
               trackListingFiltersSelected('card_networks', network);
@@ -929,10 +929,10 @@ const CardListing = () => {
               {/* Mobile: Collapsible */}
               <div className="lg:hidden">
                 <Collapsible open={eligibilityOpen} onOpenChange={setEligibilityOpen}>
-                  <div className="bg-[#F5F5F5] dark:bg-[#004E92]/20 rounded-xl border border-[#004E92]/60 dark:border-[#004E92]/30 overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-[#F5F5F5]/50 dark:hover:bg-[#004E92]/30 transition-colors touch-target">
+                  <div className="bg-[#F5F5F5] dark:bg-[#1A6DA4]/20 rounded-xl border border-[#1A6DA4]/60 dark:border-[#1A6DA4]/30 overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-[#F5F5F5]/50 dark:hover:bg-[#1A6DA4]/30 transition-colors touch-target">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#004E92] dark:text-[#004E92] flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#1A6DA4] dark:text-[#1A6DA4] flex-shrink-0" />
                         <div className="text-left">
                           <h3 className="font-semibold text-xs sm:text-sm text-foreground">Check Eligibility</h3>
                           <p className="text-[10px] sm:text-xs text-muted-foreground">Quick 3-field check</p>
@@ -992,7 +992,7 @@ const CardListing = () => {
                           <Button
                             onClick={handleEligibilitySubmit}
                             size="lg"
-                            className="h-11 gap-2 w-full bg-[#004E92] hover:bg-[#004E92]"
+                            className="h-11 gap-2 w-full bg-[#1A6DA4] hover:bg-[#1A6DA4]"
                           >
                             <CheckCircle2 className="w-4 h-4" />
                             <span className="text-sm font-semibold">{eligibilitySubmitted ? "Applied" : "Check"}</span>
@@ -1081,10 +1081,10 @@ const CardListing = () => {
                 'utility': 'Utility'
               };
               const categoryName = categoryLabels[filters.category] || 'Category';
-              return <div className="hidden lg:block mb-4 bg-[#F5F5F5]/40 dark:bg-[#004E92]/10 border border-[#004E92]/60 dark:border-[#004E92]/30 rounded-xl p-3">
+              return <div className="hidden lg:block mb-4 bg-[#F5F5F5]/40 dark:bg-[#1A6DA4]/10 border border-[#1A6DA4]/60 dark:border-[#1A6DA4]/30 rounded-xl p-3">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 flex-1">
-                    <Sparkles className="h-4 w-4 text-[#004E92] dark:text-[#004E92] flex-shrink-0" />
+                    <Sparkles className="h-4 w-4 text-[#1A6DA4] dark:text-[#1A6DA4] flex-shrink-0" />
                     <div>
                       <h3 className="text-sm font-semibold text-foreground">
                         Pro Tip: Try our AI Card Genius
@@ -1094,7 +1094,7 @@ const CardListing = () => {
                       </p>
                     </div>
                   </div>
-                  <Button onClick={() => setShowGeniusDialog(true)} size="sm" className="whitespace-nowrap bg-[#004E92] hover:bg-[#004E92] text-white h-9 px-4">
+                  <Button onClick={() => setShowGeniusDialog(true)} size="sm" className="whitespace-nowrap bg-[#1A6DA4] hover:bg-[#1A6DA4] text-white h-9 px-4">
                     Enter My Spends
                   </Button>
                 </div>
@@ -1117,7 +1117,7 @@ const CardListing = () => {
                 {(filters.category !== 'all' || filters.card_networks.length > 0 || filters.annualFees || eligibilitySubmitted) && (
                   <button
                     onClick={clearFilters}
-                    className="text-xs text-[#004E92] hover:text-[#003A6E] font-semibold"
+                    className="text-xs text-[#1A6DA4] hover:text-[#155d8c] font-semibold"
                   >
                     Clear all
                   </button>
@@ -1205,7 +1205,7 @@ const CardListing = () => {
                 Credit Score: {filters.credit_score}
                 <X className="w-3 h-3 cursor-pointer" onClick={() => handleFilterChange('credit_score', '')} />
               </Badge>}
-              {eligibilitySubmitted && <Badge variant="secondary" className="gap-2 bg-[#F5F5F5] dark:bg-[#004E92] text-[#004E92] dark:text-[#004E92] border-[#004E92] dark:border-[#004E92]">
+              {eligibilitySubmitted && <Badge variant="secondary" className="gap-2 bg-[#F5F5F5] dark:bg-[#1A6DA4] text-[#1A6DA4] dark:text-[#1A6DA4] border-[#1A6DA4] dark:border-[#1A6DA4]">
                 <CheckCircle2 className="w-3 h-3" />
                 Eligibility Applied
                 <X className="w-3 h-3 cursor-pointer" onClick={async () => {
@@ -1219,7 +1219,7 @@ const CardListing = () => {
                   toast.success("Eligibility filter removed");
                 }} />
               </Badge>}
-              {geniusSpendingData && <Badge variant="secondary" className="gap-2 bg-[#F5F5F5] dark:bg-[#004E92]/30 text-[#004E92] dark:text-[#F5F5F5] border-[#F5F5F5] dark:border-[#004E92]">
+              {geniusSpendingData && <Badge variant="secondary" className="gap-2 bg-[#F5F5F5] dark:bg-[#1A6DA4]/30 text-[#1A6DA4] dark:text-[#F5F5F5] border-[#F5F5F5] dark:border-[#1A6DA4]">
                 <Sparkles className="w-3 h-3" />
                 Category Genius Applied
                 <X className="w-3 h-3 cursor-pointer" onClick={() => {
@@ -1267,7 +1267,7 @@ const CardListing = () => {
                             ₹0 Savings/yr
                           </div>;
                         }
-                        return <div className="absolute top-3 left-3 bg-[#004E92] text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 text-sm font-bold z-10">
+                        return <div className="absolute top-3 left-3 bg-[#1A6DA4] text-white px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 text-sm font-bold z-10">
                           <Sparkles className="w-4 h-4" />
                           Save ₹{saving.toLocaleString()}/yr
                         </div>;
@@ -1283,7 +1283,7 @@ const CardListing = () => {
                         const alias = getCardAlias(card) || card.seo_card_alias || card.card_alias;
                         return alias && eligibleCardAliases.includes(String(alias));
                       })() && (
-                          <Badge className="absolute bottom-3 right-3 bg-[#004E92] gap-1 z-10">
+                          <Badge className="absolute bottom-3 right-3 bg-[#1A6DA4] gap-1 z-10">
                             <CheckCircle2 className="w-3 h-3" />
                             Eligible
                           </Badge>
@@ -1403,7 +1403,7 @@ const CardListing = () => {
       <div className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-white dark:bg-background border-b border-border shadow-md animate-in slide-in-from-top duration-300">
         <div className="px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#004E92]" />
+            <CheckCircle2 className="w-4 h-4 text-[#1A6DA4]" />
             <span className="text-xs font-semibold">Check Eligibility</span>
           </div>
           <Button
@@ -1412,7 +1412,7 @@ const CardListing = () => {
               setEligibilityOpen(true);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="h-8 text-xs font-bold bg-[#004E92] hover:bg-[#004E92]"
+            className="h-8 text-xs font-bold bg-[#1A6DA4] hover:bg-[#1A6DA4]"
           >
             Quick Check
           </Button>
@@ -1424,7 +1424,7 @@ const CardListing = () => {
     {filters.category !== 'all' && !showGeniusDialog && (
       <button
         onClick={() => setShowGeniusDialog(true)}
-        className="lg:hidden fixed bottom-20 right-4 z-50 bg-[#004E92] hover:bg-[#003A6E] text-white rounded-full shadow-2xl hover:shadow-[#004E92]/50 p-3 sm:p-4 flex items-center gap-2 animate-in zoom-in duration-300 touch-target group active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-20 right-4 z-50 bg-[#1A6DA4] hover:bg-[#155d8c] text-white rounded-full shadow-2xl hover:shadow-[#1A6DA4]/50 p-3 sm:p-4 flex items-center gap-2 animate-in zoom-in duration-300 touch-target group active:scale-95 transition-all"
         style={{ bottom: showStickyFilter ? '80px' : '20px' }}
       >
         <div className="relative">
@@ -1462,7 +1462,7 @@ const CardListing = () => {
                   trackComparePanelViewed(selectedCards.length);
                   window.dispatchEvent(new Event('openComparison'));
                 }}
-                className="text-[#004E92] font-semibold text-sm h-11 px-1"
+                className="text-[#1A6DA4] font-semibold text-sm h-11 px-1"
               >
                 View Compare
               </button>

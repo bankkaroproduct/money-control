@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Lato, Montserrat, Roboto, Lora } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Analytics } from "@/components/Analytics";
@@ -7,11 +7,26 @@ import { brandConfig } from "@/config/brand.config";
 import { BrandStyles } from "@/components/BrandStyles";
 import { SEOTags } from "@/components/SEOTags";
 
-const inter = Inter({ subsets: ["latin"] });
-const playfair = Playfair_Display({
+const lato = Lato({
     subsets: ["latin"],
-    variable: "--font-playfair",
+    weight: ["400", "700", "900"],
+    variable: "--font-lato",
+});
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    weight: ["300", "400", "700", "900"],
     style: ["normal", "italic"],
+    variable: "--font-montserrat",
+});
+const roboto = Roboto({
+    subsets: ["latin"],
+    weight: ["400", "700"],
+    variable: "--font-roboto",
+});
+const lora = Lora({
+    subsets: ["latin"],
+    weight: ["400", "700"],
+    variable: "--font-lora",
 });
 
 export const metadata: Metadata = {
@@ -34,7 +49,7 @@ export default function RootLayout({
             <head>
                 <BrandStyles />
             </head>
-            <body className={`${inter.className} ${playfair.variable}`}>
+            <body className={`${lato.variable} ${montserrat.variable} ${roboto.variable} ${lora.variable} ${montserrat.className}`}>
                 <SEOTags />
                 <Analytics />
                 <Providers>{children}</Providers>

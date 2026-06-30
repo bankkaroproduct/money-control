@@ -18,7 +18,6 @@ const Footer = () => {
   const footerRef = useRef<HTMLElement | null>(null);
   const viewedRef = useRef(false);
 
-  // Fire footer_section_viewed once when footer scrolls into view
   useEffect(() => {
     const el = footerRef.current;
     if (!el || typeof IntersectionObserver === 'undefined') return;
@@ -35,105 +34,129 @@ const Footer = () => {
     return () => observer.disconnect();
   }, []);
 
-  const sections = useMemo(() => ([
-    {
-      id: "about",
-      title: brandConfig.name,
-      content: (
-        <div className="space-y-4">
-          <div>
-            <div className="text-sm opacity-80 leading-relaxed mb-4">
-              Helping users make smarter credit card decisions with personalized recommendations, detailed comparisons, and expert insights.
-            </div>
-            <div
-              className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-              onClick={() => trackFooterBankKaroLogoClicked()}
-            >
-              <span className="text-[10px] uppercase tracking-wider font-medium">Powered by</span>
-              <img
-                src="/bankkaro-powered.svg"
-                alt="BankKaro"
-                className="h-5 w-auto"
-              />
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "links",
-      title: "Quick Links",
-      content: (
-        <ul className="space-y-3 text-sm opacity-80">
-          <li><Link to="/" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Home'); trackFooterQuickLinkClicked('Home'); }}>Home</Link></li>
-          <li><Link to="/cards" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Discover Cards'); trackFooterQuickLinkClicked('Discover Cards'); }}>Discover Cards</Link></li>
-          <li><Link to="/card-genius" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('AI Card Genius'); trackFooterQuickLinkClicked('AI Card Genius'); }}>AI Card Genius</Link></li>
-          <li><Link to="/card-genius-category" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('AI Category Card Genius'); trackFooterQuickLinkClicked('AI Category Card Genius'); }}>AI Category Card Genius</Link></li>
-          <li><Link to="/beat-my-card" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Beat My Card'); trackFooterQuickLinkClicked('Beat My Card'); }}>Beat My Card</Link></li>
-          <li><Link to="/blogs" className="hover:opacity-100 transition-opacity" onClick={() => { analytics.trackFooterClick('Blogs'); trackFooterQuickLinkClicked('Blogs'); }}>Blogs</Link></li>
-        </ul>
-      )
-    },
-    {
-      id: "contact",
-      title: "Get In Touch",
-      content: (
-        <div className="space-y-3 text-sm opacity-80">
-          <p>Have questions? We're here to help!</p>
-          <p>  <a href={`mailto:${brandConfig.email}`} className="hover:opacity-100 transition-opacity" onClick={() => trackFooterEmailClicked(brandConfig.email)}>{brandConfig.email}</a></p>
-          <p>Available 24/7 to assist you with your credit card queries.</p>
-        </div>
-      )
-    }
-  ]), []);
+  const quickLinks = useMemo(() => [
+    { label: "Home", to: "/" },
+    { label: "Discover Cards", to: "/cards" },
+    { label: "AI Card Genius", to: "/card-genius" },
+    { label: "Category Card Genius", to: "/card-genius-category" },
+    { label: "Beat My Card", to: "/beat-my-card" },
+    { label: "Blogs", to: "/blogs" },
+  ], []);
 
   return (
-    <footer ref={footerRef} className="text-white pt-12 sm:pt-14 md:pt-16 pb-8 sm:pb-10 safe-area-inset-bottom" style={{ backgroundColor: "#004E92" }}>
-      <div className="section-shell">
-        {/* Desktop: 3-column grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-10 lg:gap-12 mb-10 lg:mb-12">
-          {sections.map(section => (
-            <div key={section.id}>
-              <h3 className="font-bold text-lg lg:text-xl mb-5 lg:mb-6">{section.title}</h3>
-              {section.content}
+    <footer ref={footerRef} className="text-white safe-area-inset-bottom" style={{ backgroundColor: "#0e2230" }}>
+      <div className="max-w-[1200px] mx-auto px-5 md:px-8 pt-14 md:pt-20 pb-8">
+        {/* Desktop */}
+        <div className="hidden md:grid md:grid-cols-4 gap-10 mb-12">
+          <div className="col-span-1">
+            <img src={brandConfig.logo} alt={brandConfig.name} className="h-7 w-auto mb-4 opacity-90" />
+            <p className="font-roboto text-sm text-white/50 leading-relaxed mb-5">
+              Helping users make smarter credit card decisions with AI-powered recommendations.
+            </p>
+            <div className="flex items-center gap-2 text-white/30 hover:text-white/50 transition-colors cursor-pointer" onClick={() => trackFooterBankKaroLogoClicked()}>
+              <span className="font-lato text-[9px] font-bold tracking-[0.15em] uppercase">Powered by</span>
+              <img src="/bankkaro-powered.svg" alt="BankKaro" className="h-4 w-auto opacity-40" />
             </div>
-          ))}
+          </div>
+
+          <div>
+            <h4 className="font-lato text-[11px] font-bold tracking-[0.15em] uppercase text-white/40 mb-4">Quick Links</h4>
+            <ul className="space-y-2.5">
+              {quickLinks.slice(0, 3).map(link => (
+                <li key={link.to}>
+                  <Link to={link.to} className="font-roboto text-sm text-white/60 hover:text-white transition-colors" onClick={() => { analytics.trackFooterClick(link.label); trackFooterQuickLinkClicked(link.label); }}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-lato text-[11px] font-bold tracking-[0.15em] uppercase text-white/40 mb-4">Tools</h4>
+            <ul className="space-y-2.5">
+              {quickLinks.slice(3).map(link => (
+                <li key={link.to}>
+                  <Link to={link.to} className="font-roboto text-sm text-white/60 hover:text-white transition-colors" onClick={() => { analytics.trackFooterClick(link.label); trackFooterQuickLinkClicked(link.label); }}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-lato text-[11px] font-bold tracking-[0.15em] uppercase text-white/40 mb-4">Contact</h4>
+            <p className="font-roboto text-sm text-white/50 mb-2">Have questions?</p>
+            <a href={`mailto:${brandConfig.email}`} className="font-lato text-sm font-bold text-[#1A6DA4] hover:text-[#5BA42B] transition-colors" onClick={() => trackFooterEmailClicked(brandConfig.email)}>
+              {brandConfig.email}
+            </a>
+          </div>
         </div>
 
-        {/* Mobile: Accordion sections */}
-        <div className="md:hidden space-y-3 mb-8">
-          {sections.map(section => {
+        {/* Mobile: Accordion */}
+        <div className="md:hidden space-y-0 mb-8 border border-white/[0.08] overflow-hidden" style={{ borderRadius: "12px" }}>
+          {[
+            {
+              id: "about", title: brandConfig.name,
+              content: (
+                <div className="space-y-3">
+                  <p className="font-roboto text-sm text-white/50 leading-relaxed">Helping users make smarter credit card decisions with AI-powered recommendations.</p>
+                  <div className="flex items-center gap-2 text-white/30" onClick={() => trackFooterBankKaroLogoClicked()}>
+                    <span className="font-lato text-[9px] font-bold tracking-[0.15em] uppercase">Powered by</span>
+                    <img src="/bankkaro-powered.svg" alt="BankKaro" className="h-4 w-auto opacity-40" />
+                  </div>
+                </div>
+              ),
+            },
+            {
+              id: "links", title: "Quick Links",
+              content: (
+                <ul className="space-y-2">
+                  {quickLinks.map(link => (
+                    <li key={link.to}>
+                      <Link to={link.to} className="font-roboto text-sm text-white/50 hover:text-white transition-colors" onClick={() => { analytics.trackFooterClick(link.label); trackFooterQuickLinkClicked(link.label); }}>{link.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              ),
+            },
+            {
+              id: "contact", title: "Get In Touch",
+              content: (
+                <div className="space-y-2">
+                  <p className="font-roboto text-sm text-white/50">Have questions?</p>
+                  <a href={`mailto:${brandConfig.email}`} className="font-lato text-sm font-bold text-[#1A6DA4]" onClick={() => trackFooterEmailClicked(brandConfig.email)}>{brandConfig.email}</a>
+                </div>
+              ),
+            },
+          ].map((section) => {
             const isOpen = openSection === section.id;
             return (
-              <div key={section.id} className="border border-background/20 rounded-xl bg-background/5 overflow-hidden">
+              <div key={section.id} className="border-b border-white/[0.06] last:border-b-0">
                 <button
-                  className="w-full flex items-center justify-between px-4 py-3.5 touch-target"
+                  className="w-full flex items-center justify-between px-5 py-4 touch-target"
                   onClick={() => setOpenSection(isOpen ? null : section.id)}
                   aria-expanded={isOpen}
-                  aria-controls={`footer-section-${section.id}`}
                 >
-                  <span className="font-semibold text-sm sm:text-base">{section.title}</span>
-                  <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                  <span className="font-lato text-sm font-bold text-white/80">{section.title}</span>
+                  <ChevronDown className={`w-4 h-4 text-white/40 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {isOpen && (
-                  <div id={`footer-section-${section.id}`} className="px-4 pb-4 animate-accordion-down">
-                    {section.content}
-                  </div>
-                )}
+                {isOpen && <div className="px-5 pb-5">{section.content}</div>}
               </div>
             );
           })}
         </div>
 
-        {/* Copyright & Legal Links */}
-        <div className="border-t border-background/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <p className="text-xs opacity-60 text-center sm:text-left">
+        {/* Copyright */}
+        <div className="border-t border-white/[0.06] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="font-roboto text-xs text-white/30">
             © {new Date().getFullYear()} Pouring Pounds India Pvt. Ltd. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 sm:gap-5 text-xs sm:text-sm opacity-60">
-            <a href="https://bankkaro.com/privacy-policy" target="_blank" className="hover:opacity-100 hover:text-white transition-all" onClick={() => trackFooterPrivacyPolicyClicked()}>Privacy Policy</a>
-            <span className="hidden sm:inline">•</span>
-            <a href="https://bankkaro.com/terms-conditions" target="_blank" className="hover:opacity-100 hover:text-white transition-all" onClick={() => trackFooterTermsClicked()}>Terms of Service</a>
+          <div className="flex items-center gap-5 font-roboto text-xs text-white/30">
+            <a href="https://bankkaro.com/privacy-policy" target="_blank" className="hover:text-white/60 transition-colors" onClick={() => trackFooterPrivacyPolicyClicked()}>Privacy Policy</a>
+            <span>·</span>
+            <a href="https://bankkaro.com/terms-conditions" target="_blank" className="hover:text-white/60 transition-colors" onClick={() => trackFooterTermsClicked()}>Terms of Service</a>
           </div>
         </div>
       </div>

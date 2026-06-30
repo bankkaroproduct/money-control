@@ -1,9 +1,8 @@
 "use client";
-import { Search, Star, CreditCard, Users, TrendingUp } from "lucide-react";
+import { Search, Star, CreditCard, Users, TrendingUp, ArrowRight, Sparkles, Swords, LayoutGrid, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
-import AdvisorToolsGrid from "@/components/AdvisorToolsGrid";
 import Footer from "@/components/Footer";
 import { Link } from "@/components/Link";
 import { authManager } from "@/services/authManager";
@@ -18,9 +17,12 @@ import {
   trackSearchSubmitted,
   trackSearchQueryTyped,
   trackHeroExploreAllCardsClicked,
+  trackToolsSectionViewed,
+  trackHomepageSuperCardGeniusClicked,
+  trackHomepageBeatMyCardClicked,
+  trackHomepageCategoryCardGeniusClicked,
 } from "@/services/journeyTrack";
 
-// ── Types ────────────────────────────────────────────────────────────────────
 type CardItem = {
   name: string;
   bank: string;
@@ -33,28 +35,13 @@ type CardItem = {
 
 type TabKey = "picks" | "best" | "beginner" | "cashback";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 const BANK_MAP: Record<string, string> = {
-  hdfc: "HDFC Bank",
-  sbi: "SBI Card",
-  axis: "Axis Bank",
-  icici: "ICICI Bank",
-  kotak: "Kotak Bank",
-  idfc: "IDFC FIRST",
-  hsbc: "HSBC",
-  amex: "Amex",
-  "american express": "Amex",
-  scapia: "Federal Bank",
-  kiwi: "Kiwi",
-  indusind: "IndusInd Bank",
-  yes: "Yes Bank",
-  rbl: "RBL Bank",
-  au: "AU Small Finance",
-  bob: "Bank of Baroda",
-  swiggy: "HDFC Bank",
-  flipkart: "SBI Card",
-  myntra: "Kotak Bank",
-  tata: "SBI Card",
+  hdfc: "HDFC Bank", sbi: "SBI Card", axis: "Axis Bank", icici: "ICICI Bank",
+  kotak: "Kotak Bank", idfc: "IDFC FIRST", hsbc: "HSBC", amex: "Amex",
+  "american express": "Amex", scapia: "Federal Bank", kiwi: "Kiwi",
+  indusind: "IndusInd Bank", yes: "Yes Bank", rbl: "RBL Bank",
+  au: "AU Small Finance", bob: "Bank of Baroda", swiggy: "HDFC Bank",
+  flipkart: "SBI Card", myntra: "Kotak Bank", tata: "SBI Card",
 };
 
 function extractBank(cardName: string): string {
@@ -64,7 +51,6 @@ function extractBank(cardName: string): string {
   }
   return "Bank";
 }
-
 
 function parseRawCards(data: any): any[] {
   if (Array.isArray(data?.data?.cards)) return data.data.cards;
@@ -96,7 +82,6 @@ function curateCards(raw: any[], aliases: string[]): CardItem[] {
     const a = c.seo_card_alias || c.card_alias || "";
     if (a && !byAlias.has(a)) byAlias.set(a, c);
   });
-
   const result: CardItem[] = [];
   const used = new Set<string>();
   for (const alias of aliases) {
@@ -105,8 +90,6 @@ function curateCards(raw: any[], aliases: string[]): CardItem[] {
       used.add(alias);
     }
   }
-
-  // Fill remaining slots with API order if curated cards weren't found
   if (result.length < 9) {
     for (const c of raw) {
       if (result.length >= 9) break;
@@ -117,151 +100,157 @@ function curateCards(raw: any[], aliases: string[]): CardItem[] {
       }
     }
   }
-
   return result.slice(0, 9);
 }
 
-// ── Stats ────────────────────────────────────────────────────────────────────
 const STATS = [
-  { value: "130+",  label: "Cards Listed",   icon: CreditCard },
-  { value: "50K+",  label: "Users Helped",   icon: Users },
-  { value: "₹12K",  label: "Avg. Savings/yr",icon: TrendingUp },
-  { value: "4.9★",  label: "User Rating",    icon: Star },
+  { value: "130+", label: "Cards Listed", icon: CreditCard },
+  { value: "50K+", label: "Users Helped", icon: Users },
+  { value: "₹12K", label: "Avg. Savings/yr", icon: TrendingUp },
+  { value: "4.9★", label: "User Rating", icon: Star },
 ];
 
-// ── Card component ───────────────────────────────────────────────────────────
-function CardTile({ card }: { card: CardItem }) {
+function CardTile({ card, index }: { card: CardItem; index: number }) {
   const networkList = card.networks
     ? card.networks.split(",").map((n) => n.trim()).filter(Boolean)
     : [];
 
-  const handleCardClick = () => {
-    trackPicksCardClicked(card.alias, card.name, card.bank, 'picks');
-  };
-
-  const handleDetailsClick = () => {
-    trackPicksCardDetailsClicked(card.alias, card.name, 'picks');
-  };
-
   return (
-    <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden flex flex-col hover:shadow-md transition-shadow duration-200" onClick={handleCardClick}>
-      {/* Image — full width, flush to top */}
-      <div className="h-44 bg-[#FFF5E6] flex items-center justify-center overflow-hidden">
+    <div
+      className="group relative bg-white overflow-hidden hover:shadow-lg transition-all duration-300"
+      style={{ borderRadius: "12px" }}
+      onClick={() => trackPicksCardClicked(card.alias, card.name, card.bank, 'picks')}
+    >
+      <div className="relative h-44 bg-gradient-to-br from-[#f0f4f8] to-[#e8edf3] flex items-center justify-center overflow-hidden">
         <img
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="w-full h-full object-contain scale-110"
+          className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
+        {index < 3 && (
+          <span
+            className="absolute top-3 right-3 font-lato text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 bg-[#1A6DA4] text-white"
+            style={{ borderRadius: "4px" }}
+          >
+            Top Pick
+          </span>
+        )}
       </div>
 
-      {/* Content */}
-      <div className="px-4 pt-3 pb-4 flex flex-col flex-1">
-        {/* Network badges */}
-        {networkList.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {networkList.map((n) => (
-              <span key={n} className="text-[10px] border border-gray-300 rounded-full px-2 py-0.5 text-gray-500">
-                {n === "AmericanExpress" ? "Amex" : n}
-              </span>
-            ))}
+      <div className="px-4 pt-3.5 pb-4">
+        <p className="font-roboto text-[11px] text-[#1A6DA4] font-medium mb-1">{card.bank}</p>
+        <h3 className="font-lato text-[15px] font-bold text-[#1a1a2e] leading-snug line-clamp-2 mb-3">{card.name}</h3>
+
+        <div className="flex gap-3 mb-3">
+          <div className="flex-1">
+            <span className="block font-roboto text-[10px] text-[#999] uppercase tracking-wider">Joining</span>
+            <span className="block font-lato text-sm font-bold text-[#1a1a2e]">{card.joining_fee}</span>
           </div>
-        )}
-
-        <h3 className="text-sm font-bold text-[#111] leading-snug line-clamp-2 mb-3">{card.name}</h3>
-
-        {/* Button */}
-        <div className="mt-auto">
-          <Link
-            to={card.alias ? `/cards/${card.alias}` : "/cards"}
-            onClick={handleDetailsClick}
-            className="block w-full text-center text-xs font-semibold py-2.5 rounded-lg border border-[#004E92] text-[#004E92] hover:bg-[#EEF4FF] transition-colors"
-          >
-            Details
-          </Link>
+          <div className="w-px bg-[#eee]" />
+          <div className="flex-1">
+            <span className="block font-roboto text-[10px] text-[#999] uppercase tracking-wider">Annual</span>
+            <span className="block font-lato text-sm font-bold text-[#1a1a2e]">{card.annual_fee}</span>
+          </div>
         </div>
+
+        <Link
+          to={card.alias ? `/cards/${card.alias}` : "/cards"}
+          onClick={() => trackPicksCardDetailsClicked(card.alias, card.name, 'picks')}
+          className="flex items-center justify-center gap-2 w-full font-lato text-xs font-bold tracking-wide uppercase py-2.5 text-[#1A6DA4] bg-[#1A6DA4]/[0.06] hover:bg-[#1A6DA4] hover:text-white transition-all duration-200"
+          style={{ borderRadius: "8px" }}
+        >
+          View Details <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </div>
   );
 }
 
-// ── Skeleton ─────────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
-    <div className="bg-white border border-[#E5EAF0] rounded-xl overflow-hidden animate-pulse">
-      <div className="h-44 bg-gray-100" />
-      <div className="px-4 pt-3 pb-4 space-y-2">
-        <div className="h-3 bg-gray-100 rounded w-1/4" />
-        <div className="h-4 bg-gray-100 rounded w-3/4" />
-        <div className="h-12 bg-gray-100 rounded-lg mt-2" />
-        <div className="flex gap-2 mt-2">
-          <div className="h-9 bg-gray-100 rounded-lg flex-1" />
-          <div className="h-9 bg-gray-100 rounded-lg flex-1" />
+    <div className="bg-white overflow-hidden" style={{ borderRadius: "12px" }}>
+      <div className="h-44 bg-[#f0f4f8] animate-pulse" />
+      <div className="px-4 pt-3.5 pb-4 space-y-3">
+        <div className="h-2 bg-[#eee] rounded w-1/3" />
+        <div className="h-4 bg-[#eee] rounded w-3/4" />
+        <div className="flex gap-3">
+          <div className="h-10 bg-[#eee] flex-1 rounded" />
+          <div className="h-10 bg-[#eee] flex-1 rounded" />
         </div>
+        <div className="h-9 bg-[#eee] rounded-lg" />
       </div>
     </div>
   );
 }
 
-// ── Curated card aliases per tab (ordered) ───────────────────────────────────
 const CURATED_ALIASES: Record<TabKey, string[]> = {
   picks: [
-    "hdfc-regalia-gold-credit-card",
-    "sbi-cashback-credit-card",
-    "axis-bank-magnus-credit-card",
-    "hdfc-millenia-credit-card",
-    "icici-amazon-pay-credit-card",
-    "axis-atlas-credit-card",
-    "idfc-first-wealth-credit-card",
-    "tata-neu-infinity-sbi-credit-card",
+    "hdfc-regalia-gold-credit-card", "sbi-cashback-credit-card",
+    "axis-bank-magnus-credit-card", "hdfc-millenia-credit-card",
+    "icici-amazon-pay-credit-card", "axis-atlas-credit-card",
+    "idfc-first-wealth-credit-card", "tata-neu-infinity-sbi-credit-card",
     "axis-flipkart-credit-card",
   ],
   best: [
-    "hdfc-infinia-credit-card",
-    "axis-bank-magnus-credit-card",
-    "axis-atlas-credit-card",
-    "hdfc-diners-club-black",
-    "hdfc-regalia-gold-credit-card",
-    "sbi-aurum-credit-card",
-    "icici-emeralde-private-metal-credit-card",
-    "hdfc-marriott-bonvoy-credit-card",
+    "hdfc-infinia-credit-card", "axis-bank-magnus-credit-card",
+    "axis-atlas-credit-card", "hdfc-diners-club-black",
+    "hdfc-regalia-gold-credit-card", "sbi-aurum-credit-card",
+    "icici-emeralde-private-metal-credit-card", "hdfc-marriott-bonvoy-credit-card",
     "axis-bank-reserve-credit-card",
   ],
   beginner: [
-    "icici-amazon-pay-credit-card",
-    "idfc-first-select-credit-card",
-    "axis-neo-credit-card",
-    "scapia-credit-card",
-    "hdfc-pixel-play-credit-card",
-    "kiwi-klick-credit-card",
-    "kotak-811-dream-different-credit-card",
-    "rbl-bank-play-credit-card",
+    "icici-amazon-pay-credit-card", "idfc-first-select-credit-card",
+    "axis-neo-credit-card", "scapia-credit-card",
+    "hdfc-pixel-play-credit-card", "kiwi-klick-credit-card",
+    "kotak-811-dream-different-credit-card", "rbl-bank-play-credit-card",
     "idfc-first-classic-credit-card",
   ],
   cashback: [
-    "sbi-cashback-credit-card",
-    "hdfc-millenia-credit-card",
-    "icici-amazon-pay-credit-card",
-    "axis-flipkart-credit-card",
-    "axis-cashback-credit-card",
-    "hdfc-swiggy-credit-card",
-    "hdfc-pixel-play-credit-card",
-    "flipkart-sbi-credit-card",
+    "sbi-cashback-credit-card", "hdfc-millenia-credit-card",
+    "icici-amazon-pay-credit-card", "axis-flipkart-credit-card",
+    "axis-cashback-credit-card", "hdfc-swiggy-credit-card",
+    "hdfc-pixel-play-credit-card", "flipkart-sbi-credit-card",
     "hdfc-tata-neu-plus-credit-card",
   ],
 };
 
-// ── Tab config with fetch params ─────────────────────────────────────────────
 const TAB_CONFIG: Record<TabKey, { label: string; slug: string; free_cards: string; sort_by: string }> = {
-  picks:    { label: "BankExpert's Picks", slug: "",                          free_cards: "",     sort_by: "priority" },
+  picks:    { label: "Moneycontrol Picks", slug: "",                          free_cards: "",     sort_by: "priority" },
   best:     { label: "Best Cards",         slug: "best-travel-credit-card",   free_cards: "",     sort_by: "priority" },
   beginner: { label: "Beginner Cards",     slug: "",                          free_cards: "true", sort_by: "priority" },
   cashback: { label: "Best Cashback",      slug: "best-shopping-credit-card", free_cards: "",     sort_by: "priority" },
 };
 
-// ── Tabbed picks section ─────────────────────────────────────────────────────
-function ShubhamPicks() {
+const TOOLS = [
+  {
+    icon: Sparkles,
+    title: "Super Card Genius",
+    description: "AI-powered card recommendations based on your spending habits",
+    to: "/card-genius",
+    onTrack: () => trackHomepageSuperCardGeniusClicked("Super Card Genius", "tools_section"),
+    gradient: "from-[#1A6DA4] to-[#0e4d7a]",
+  },
+  {
+    icon: Swords,
+    title: "Beat My Card",
+    description: "Find a better card than the one you already have",
+    to: "/beat-my-card",
+    onTrack: () => trackHomepageBeatMyCardClicked("Beat My Card", "tools_section"),
+    gradient: "from-[#5BA42B] to-[#3d7a1a]",
+  },
+  {
+    icon: LayoutGrid,
+    title: "Category Card Genius",
+    description: "Discover the best card for any spending category",
+    to: "/card-genius-category",
+    onTrack: () => trackHomepageCategoryCardGeniusClicked("Category Card Genius", "tools_section"),
+    gradient: "from-[#0e2230] to-[#1a3a50]",
+  },
+];
+
+function PicksSection() {
   const [activeTab, setActiveTab] = useState<TabKey>("picks");
   const [cards, setCards] = useState<CardItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -269,23 +258,19 @@ function ShubhamPicks() {
   const cache = useRef<Partial<Record<TabKey, CardItem[]>>>({});
 
   const fetchCardsForTab = (tabKey: TabKey) => {
-    // Return cached result immediately
     if (cache.current[tabKey]) {
       setCards(cache.current[tabKey]!);
       setLoading(false);
       setError(null);
       return;
     }
-
     setLoading(true);
     setError(null);
     setCards([]);
-
     const config = TAB_CONFIG[tabKey];
     const qs = new URLSearchParams({ sort_by: config.sort_by, limit: "200" });
     if (config.slug) qs.set("slug", config.slug);
     if (config.free_cards) qs.set("free_cards", config.free_cards);
-
     authManager
       .makeAuthenticatedRequest(`/api/proxy/cardgenius/cards?${qs}`, { method: "GET" })
       .then((r) => r.json())
@@ -301,7 +286,6 @@ function ShubhamPicks() {
       .finally(() => setLoading(false));
   };
 
-  // Load default tab on mount
   useEffect(() => {
     trackHomePageView();
     fetchCardsForTab("picks");
@@ -315,68 +299,75 @@ function ShubhamPicks() {
   };
 
   return (
-    <section id="picks-section" className="py-14 bg-[#F9FAFB]">
-      <div className="container max-w-5xl mx-auto px-4">
+    <section id="picks-section" className="py-16 md:py-24 bg-[#f5f7fa]">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-8">
         {/* Section header */}
-        <div className="mb-8">
-          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-gray-400 mb-1">
-            Curated by BankExpert
-          </p>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#004E92]">
-            Explore BankExpert's Picks
-          </h2>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+          <div>
+            <span className="inline-block font-lato text-[11px] font-bold tracking-[0.2em] uppercase text-[#1A6DA4] mb-2">
+              Curated Selection
+            </span>
+            <h2 className="font-montserrat text-2xl md:text-[2rem] font-bold text-[#1a1a2e] tracking-tight leading-tight">
+              Moneycontrol Picks
+            </h2>
+          </div>
+          <Link
+            to="/cards"
+            className="inline-flex items-center gap-1.5 font-lato text-sm font-bold text-[#1A6DA4] hover:text-[#155d8c] transition-colors"
+            onClick={() => trackHeroExploreAllCardsClicked('picks_section')}
+          >
+            View all cards <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex gap-2 overflow-x-auto pb-1 mb-8 scrollbar-none">
+        {/* Tab pills */}
+        <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-none pb-1">
           {(Object.keys(TAB_CONFIG) as TabKey[]).map((key) => (
             <button
               key={key}
               onClick={() => handleTabClick(key)}
-              className={`flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-semibold transition-colors whitespace-nowrap ${
+              className={`flex-shrink-0 px-5 py-2.5 font-lato text-[13px] font-bold tracking-wide transition-all whitespace-nowrap ${
                 activeTab === key
-                  ? "bg-[#004E92] text-white"
-                  : "bg-white border border-[#E5EAF0] text-gray-500 hover:text-[#004E92] hover:border-[#004E92]"
+                  ? "bg-[#1A6DA4] text-white shadow-md shadow-[#1A6DA4]/25"
+                  : "bg-white text-[#666] hover:bg-[#eef3f8] hover:text-[#1A6DA4] border border-[#e0e4ea]"
               }`}
+              style={{ borderRadius: "100px" }}
             >
               {TAB_CONFIG[key].label}
             </button>
           ))}
         </div>
 
-        {/* Loading skeleton */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         )}
 
-        {/* Error state */}
         {!loading && error && (
-          <div className="flex flex-col items-center py-16 gap-4">
-            <p className="text-gray-500 text-sm">{error}</p>
+          <div className="flex flex-col items-center py-16 gap-4 bg-white" style={{ borderRadius: "16px" }}>
+            <p className="font-roboto text-sm text-[#999]">{error}</p>
             <button
               onClick={() => fetchCardsForTab(activeTab)}
-              className="px-6 py-2.5 rounded-lg bg-[#004E92] text-white text-sm font-semibold hover:bg-[#003A6E] transition-colors"
+              className="font-lato text-sm font-bold px-6 py-2.5 bg-[#1A6DA4] text-white hover:bg-[#155d8c] transition-colors"
+              style={{ borderRadius: "100px" }}
             >
               Retry
             </button>
           </div>
         )}
 
-        {/* Card grid */}
         {!loading && !error && cards.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {cards.map((card) => (
-              <CardTile key={card.alias || card.name} card={card} />
+            {cards.map((card, i) => (
+              <CardTile key={card.alias || card.name} card={card} index={i} />
             ))}
           </div>
         )}
 
-        {/* Empty state */}
         {!loading && !error && cards.length === 0 && (
-          <div className="text-center py-16 text-gray-400 text-sm">
-            No cards found for this category.
+          <div className="flex flex-col items-center py-16 bg-white" style={{ borderRadius: "16px" }}>
+            <p className="font-roboto text-sm text-[#999]">No cards found for this category.</p>
           </div>
         )}
       </div>
@@ -384,7 +375,76 @@ function ShubhamPicks() {
   );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+function ToolsSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const viewedRef = useRef(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !viewedRef.current) {
+          viewedRef.current = true;
+          trackToolsSectionViewed();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="py-16 md:py-24 bg-white">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-8">
+        <div className="text-center mb-12">
+          <span className="inline-block font-lato text-[11px] font-bold tracking-[0.2em] uppercase text-[#5BA42B] mb-2">
+            AI-Powered Tools
+          </span>
+          <h2 className="font-montserrat text-2xl md:text-[2rem] font-bold text-[#1a1a2e] tracking-tight">
+            Find Your Perfect Card
+          </h2>
+          <p className="font-roboto text-[15px] text-[#888] mt-2 max-w-md mx-auto">
+            Use our intelligent tools to discover, compare, and upgrade your credit cards.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {TOOLS.map((tool) => (
+            <Link
+              to={tool.to}
+              key={tool.title}
+              onClick={() => tool.onTrack()}
+              className={`group relative overflow-hidden bg-gradient-to-br ${tool.gradient} p-6 md:p-8 flex flex-col text-white hover:shadow-2xl transition-all duration-300`}
+              style={{ borderRadius: "16px", minHeight: "220px" }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.05] rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/[0.04] rounded-full translate-y-1/2 -translate-x-1/2" />
+
+              <div
+                className="relative inline-flex items-center justify-center h-12 w-12 bg-white/[0.15] mb-5"
+                style={{ borderRadius: "12px" }}
+              >
+                <tool.icon className="h-6 w-6 text-white" />
+              </div>
+
+              <h3 className="relative font-lato text-lg font-bold mb-2">{tool.title}</h3>
+              <p className="relative font-roboto text-sm text-white/70 leading-relaxed mb-6 flex-1">
+                {tool.description}
+              </p>
+
+              <span className="relative inline-flex items-center gap-2 font-lato text-sm font-bold text-white/90 group-hover:text-white transition-colors">
+                Try Now <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const HomeLanding = () => {
   const [query, setQuery] = useState("");
   const router = useRouter();
@@ -399,109 +459,154 @@ const HomeLanding = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navigation />
 
       <main className="flex-1">
         {/* ── Hero ── */}
-        <section
-          className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-20"
-          style={{ backgroundColor: "#F5F5F5" }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              opacity: 0.06,
-              backgroundImage: "radial-gradient(circle, #004E92 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
-          />
+        <section className="relative overflow-hidden pt-24 pb-0 md:pt-28" style={{ backgroundColor: "#0e2230" }}>
+          {/* Ambient glow */}
+          <div className="absolute top-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.07]" style={{ background: "radial-gradient(circle, #1A6DA4, transparent 70%)" }} />
+          <div className="absolute bottom-[-10%] left-[-5%] w-[30vw] h-[30vw] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #5BA42B, transparent 70%)" }} />
 
-          <div className="container relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto px-4">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-4" style={{ color: "#666666" }}>
-              India's Trusted Card Advisor
-            </p>
+          <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[70vh] md:min-h-[75vh] py-12 md:py-16">
+              {/* Left — copy */}
+              <div>
+                <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#5BA42B] mb-5 px-3 py-1.5 bg-[#5BA42B]/[0.1] border border-[#5BA42B]/20" style={{ borderRadius: "100px" }}>
+                  India's Trusted Card Advisor
+                </span>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-5" style={{ color: "#004E92" }}>
-              Build Wealth Through{" "}
-              <em className="not-italic" style={{ fontStyle: "italic" }}>
-                Smarter Credit Cards
-              </em>
-            </h1>
+                <h1 className="font-montserrat text-[clamp(2rem,4.5vw,3.4rem)] font-extrabold text-white leading-[1.1] tracking-tight mb-5">
+                  Smart Credit Card
+                  <br />
+                  <span className="text-[#5BA42B]">Decisions,</span>{" "}
+                  <span className="text-white/60 font-light">Made Simple</span>
+                </h1>
 
-            <p className="text-base md:text-lg mb-3 max-w-lg" style={{ color: "#666666" }}>
-              Learn which cards work best for you. No bias. No spam.
-            </p>
+                <p className="font-roboto text-base md:text-lg text-white/60 leading-[1.7] max-w-[46ch] mb-8">
+                  Data-driven recommendations across 130+ cards from 20+ banks. No bias. No spam. Just the cards that work for you.
+                </p>
 
-            <p
-              className="text-sm font-medium mb-8 cursor-pointer"
-              style={{ color: "#004E92" }}
-              onClick={() => {
-                trackHeroExplorePicksAnchorClicked('hero');
-                document.getElementById('picks-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              ↓ Explore BankExpert's Picks Below
-            </p>
+                {/* Search bar */}
+                <div className="max-w-md">
+                  <div
+                    className="flex items-center bg-white overflow-hidden shadow-2xl shadow-black/20"
+                    style={{ borderRadius: "12px" }}
+                  >
+                    <div className="relative flex-1">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#aaa]" />
+                      <input
+                        value={query}
+                        onChange={(e) => { setQuery(e.target.value); trackSearchQueryTyped(e.target.value); }}
+                        onFocus={() => trackHeroSearchBarFocused()}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Search cards or banks..."
+                        className="w-full pl-11 pr-3 h-13 text-sm text-[#1a1a2e] bg-transparent outline-none placeholder:text-[#bbb] font-roboto"
+                        style={{ height: "52px" }}
+                      />
+                    </div>
+                    <button
+                      onClick={handleSearch}
+                      className="h-10 px-5 mr-1.5 font-lato text-xs font-bold tracking-wider uppercase text-white bg-[#1A6DA4] hover:bg-[#155d8c] transition-colors flex-shrink-0"
+                      style={{ borderRadius: "8px" }}
+                    >
+                      Search
+                    </button>
+                  </div>
 
-            {/* Search bar */}
-            <div className="w-full max-w-lg">
-              <div className="flex items-center gap-0 bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <input
-                    value={query}
-                    onChange={(e) => { setQuery(e.target.value); trackSearchQueryTyped(e.target.value); }}
-                    onFocus={() => trackHeroSearchBarFocused()}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Search by card name or bank…"
-                    className="w-full pl-11 pr-4 h-12 text-sm text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
-                  />
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {["HDFC", "SBI", "Axis", "ICICI"].map((bank) => (
+                      <button
+                        key={bank}
+                        className="px-3 py-1.5 font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
+                        style={{ borderRadius: "100px" }}
+                        onClick={() => {
+                          setQuery(bank);
+                          trackSearchQueryTyped(bank);
+                        }}
+                      >
+                        {bank}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <button
-                  onClick={handleSearch}
-                  className="h-12 px-6 text-sm font-semibold text-white flex-shrink-0 transition-colors"
-                  style={{ backgroundColor: "#004E92" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#003A6E")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#004E92")}
-                >
-                  Search
-                </button>
               </div>
 
-              <div className="mt-3 flex justify-center">
-                <Link
-                  to="/cards"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium px-6 py-3 rounded-lg transition-colors"
-                  style={{ border: "1.5px solid #004E92", color: "#004E92", backgroundColor: "transparent" }}
-                  onClick={() => trackHeroExploreAllCardsClicked('hero')}
-                >
-                  Explore All Cards →
-                </Link>
+              {/* Right — stat cards bento */}
+              <div className="hidden lg:block">
+                <div className="grid grid-cols-2 gap-4">
+                  {STATS.map((s, i) => (
+                    <div
+                      key={s.label}
+                      className="bg-white/[0.06] border border-white/[0.08] backdrop-blur-sm p-5 hover:bg-white/[0.1] transition-all duration-300"
+                      style={{ borderRadius: "14px" }}
+                    >
+                      <s.icon className="h-5 w-5 text-[#5BA42B] mb-3" />
+                      <span className="block font-montserrat text-3xl font-bold text-white mb-1">{s.value}</span>
+                      <span className="block font-roboto text-xs text-white/50">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* ── Stat Strip ── */}
-        <section style={{ backgroundColor: "#004E92" }}>
-          <div className="container max-w-4xl mx-auto px-4 py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/20">
+            {/* Mobile stats row */}
+            <div className="lg:hidden grid grid-cols-4 gap-0 border-t border-white/[0.08]">
               {STATS.map((s) => (
-                <div key={s.label} className="flex flex-col items-center text-center py-1">
-                  <span className="text-2xl md:text-3xl font-extrabold leading-none text-white">{s.value}</span>
-                  <span className="text-xs mt-1 font-medium tracking-wide" style={{ color: "#F5F5F5" }}>{s.label}</span>
+                <div key={s.label} className="flex flex-col items-center text-center py-5">
+                  <span className="font-montserrat text-lg font-bold text-white">{s.value}</span>
+                  <span className="font-roboto text-[10px] text-white/40 mt-0.5">{s.label}</span>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Curved bottom */}
+          <div className="relative h-12 md:h-16 -mb-1 overflow-hidden">
+            <svg viewBox="0 0 1440 60" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
+              <path d="M0,60 L0,20 Q720,60 1440,20 L1440,60 Z" fill="#f5f7fa" />
+            </svg>
+          </div>
         </section>
 
-        {/* ── Shubham's Picks (tabbed) ── */}
-        <ShubhamPicks />
+        {/* Quick links strip */}
+        <div className="bg-[#f5f7fa]">
+          <div className="max-w-[1200px] mx-auto px-5 md:px-8">
+            <div className="flex items-center justify-center gap-4 md:gap-8 py-4 overflow-x-auto scrollbar-none">
+              <Link
+                to="/cards"
+                className="flex items-center gap-2 font-lato text-xs font-bold text-[#1A6DA4] hover:text-[#155d8c] transition-colors whitespace-nowrap"
+                onClick={() => trackHeroExploreAllCardsClicked('strip')}
+              >
+                <CreditCard className="h-3.5 w-3.5" />
+                Explore All Cards
+              </Link>
+              <span className="text-[#ccc]">|</span>
+              <Link
+                to="/card-genius"
+                className="flex items-center gap-2 font-lato text-xs font-bold text-[#5BA42B] hover:text-[#4a8c22] transition-colors whitespace-nowrap"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Card Genius
+              </Link>
+              <span className="text-[#ccc] hidden md:inline">|</span>
+              <button
+                className="hidden md:flex items-center gap-2 font-lato text-xs font-bold text-[#888] hover:text-[#1A6DA4] transition-colors whitespace-nowrap"
+                onClick={() => {
+                  trackHeroExplorePicksAnchorClicked('strip');
+                  document.getElementById('picks-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                <Star className="h-3.5 w-3.5" />
+                Curated Picks
+              </button>
+            </div>
+          </div>
+        </div>
 
-        {/* ── Tools ── */}
-        <AdvisorToolsGrid />
+        <PicksSection />
+        <ToolsSection />
       </main>
 
       <Footer />

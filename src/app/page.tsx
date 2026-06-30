@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     `Expert credit card recommendations by ${brandConfig.name}. Discover India's best credit cards for rewards, travel, cashback, and lifestyle.`,
   robots: "index, follow",
-  alternates: { canonical: process.env.NEXT_PUBLIC_APP_URL || "https://bankexpert.bankkaro.com" },
+  alternates: { canonical: process.env.NEXT_PUBLIC_APP_URL || "https://moneycontrol-expert.vercel.app" },
 };
 
 export default function Home() {

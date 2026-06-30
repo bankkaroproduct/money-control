@@ -192,7 +192,7 @@ export const trackFooterSectionViewed = () =>
 export const trackFooterQuickLinkClicked = (linkName: string) =>
   sendJourneyEvent({ event_name: 'footer_quick_link_clicked', metadata: { link_name: linkName } });
 
-export const trackFooterEmailClicked = (email = 'bankexpert@wwdc.in') =>
+export const trackFooterEmailClicked = (email = 'support@moneycontrol.com') =>
   sendJourneyEvent({ event_name: 'footer_email_clicked', metadata: { email } });
 
 export const trackFooterBankKaroLogoClicked = () =>

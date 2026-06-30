@@ -560,7 +560,7 @@ export default function CardDetails() {
                     <span className="text-xl font-bold text-foreground">{jf.inline}</span>
                   </div>
                   {card.joining_fee_offset && (
-                    <div className="bg-[#F5F5F5] border border-[#004E92]/20 rounded-lg px-4 py-2.5 max-w-full md:max-w-sm">
+                    <div className="bg-[#F5F5F5] border border-[#1A6DA4]/20 rounded-lg px-4 py-2.5 max-w-full md:max-w-sm">
                       <p className="text-xs font-medium text-primary leading-relaxed">
                         {card.joining_fee_offset}
                       </p>
@@ -573,7 +573,7 @@ export default function CardDetails() {
                     <span className="text-xl font-bold text-foreground">{af.inline}</span>
                   </div>
                   {card.annual_fee_waiver && (
-                    <div className="bg-[#F5F5F5] border border-[#004E92]/20 rounded-lg px-4 py-2.5 max-w-full md:max-w-sm">
+                    <div className="bg-[#F5F5F5] border border-[#1A6DA4]/20 rounded-lg px-4 py-2.5 max-w-full md:max-w-sm">
                       <p className="text-xs font-semibold text-primary mb-1">Waiver</p>
                       <p className="text-xs text-primary/90 leading-relaxed">
                         {card.annual_fee_waiver}
@@ -644,7 +644,7 @@ export default function CardDetails() {
               {card.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="px-3 py-1 rounded-full text-sm font-medium bg-[#F5F5F5] text-primary border border-[#004E92]/20"
+                  className="px-3 py-1 rounded-full text-sm font-medium bg-[#F5F5F5] text-primary border border-[#1A6DA4]/20"
                 >
                   {tag.name}
                 </span>
@@ -855,7 +855,7 @@ export default function CardDetails() {
                   >
                     <div className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#004E92] to-[#F5F5F5] flex items-center justify-center flex-shrink-0 shadow-md">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A6DA4] to-[#F5F5F5] flex items-center justify-center flex-shrink-0 shadow-md">
                           <span className="text-primary-foreground text-sm font-bold">✓</span>
                         </div>
                         <div className="flex-1">
@@ -883,7 +883,7 @@ export default function CardDetails() {
         )}
 
         {/* How to Apply - Enhanced */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#F5F5F5] via-[#F5F5F5]/10 to-accent/10 border-2 border-[#004E92]/20 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xl">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#F5F5F5] via-[#F5F5F5]/10 to-accent/10 border-2 border-[#1A6DA4]/20 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#EEF4FB] rounded-full blur-3xl -z-10" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -z-10" />
 
@@ -895,7 +895,7 @@ export default function CardDetails() {
 
           <div className="grid gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 max-w-4xl mx-auto md:grid-cols-3">
             <div className="flex items-center gap-4 md:flex-col md:text-center md:items-center bg-background/70 border border-border rounded-2xl p-4 sm:p-5 shadow-md">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#004E92] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#1A6DA4] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
                 1
               </div>
               <div className="text-left md:text-center">
@@ -904,7 +904,7 @@ export default function CardDetails() {
               </div>
             </div>
             <div className="flex items-center gap-4 md:flex-col md:text-center md:items-center bg-background/70 border border-border rounded-2xl p-4 sm:p-5 shadow-md">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#004E92] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#1A6DA4] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
                 2
               </div>
               <div className="text-left md:text-center">
@@ -913,7 +913,7 @@ export default function CardDetails() {
               </div>
             </div>
             <div className="flex items-center gap-4 md:flex-col md:text-center md:items-center bg-background/70 border border-border rounded-2xl p-4 sm:p-5 shadow-md">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#004E92] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#1A6DA4] to-[#F5F5F5] text-primary-foreground rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold shadow-lg">
                 3
               </div>
               <div className="text-left md:text-center">

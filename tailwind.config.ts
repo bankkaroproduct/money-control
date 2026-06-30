@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -136,8 +137,12 @@ export default {
         'card-hover': 'var(--shadow-card-hover)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['Space Grotesk', 'monospace'],
+        sans: ['var(--font-montserrat)', 'Montserrat', 'system-ui', 'sans-serif'],
+        lato: ['var(--font-lato)', 'Lato', 'sans-serif'],
+        roboto: ['var(--font-roboto)', 'Roboto', 'sans-serif'],
+        lora: ['var(--font-lora)', 'Lora', 'serif'],
+        montserrat: ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
+        mono: ['Roboto Mono', 'monospace'],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -190,5 +195,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

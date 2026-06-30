@@ -74,7 +74,7 @@ const BlogSection = () => {
             <TrendingUp className="w-4 h-4" />
             <span className="text-sm font-semibold">Expert Insights</span>
           </div>
-          <h2 className="fluid-h2 mb-3 text-[#004E92]">
+          <h2 className="fluid-h2 mb-3 text-[#1A6DA4]">
             Real Stories, Real Strategies
           </h2>
           <p className="fluid-body text-muted-foreground max-w-4xl mx-auto">
@@ -91,7 +91,7 @@ const BlogSection = () => {
                 if (el) cardsRef.current[index] = el;
               }}
               onClick={() => router.push(`/blog/${blog.slug}`)}
-              className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border/50 hover:border-[#004E92]/30 hover:-translate-y-1 sm:hover:-translate-y-2 cursor-pointer touch-target"
+              className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border/50 hover:border-[#1A6DA4]/30 hover:-translate-y-1 sm:hover:-translate-y-2 cursor-pointer touch-target"
             >
               {/* Image */}
               <div className="relative h-44 sm:h-52 md:h-56 overflow-hidden">
@@ -123,7 +123,7 @@ const BlogSection = () => {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 sm:mb-3 text-foreground group-hover:text-[#004E92] transition-colors line-clamp-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 sm:mb-3 text-foreground group-hover:text-[#1A6DA4] transition-colors line-clamp-2">
                   {blog.title}
                 </h3>
 
@@ -150,7 +150,7 @@ const BlogSection = () => {
                     <p className="text-sm font-semibold text-foreground">{blog.author}</p>
                     <p className="text-xs text-muted-foreground">Author</p>
                   </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-[#004E92] text-sm sm:text-base font-medium group-hover:translate-x-1 transition-all sm:ml-auto">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-[#1A6DA4] text-sm sm:text-base font-medium group-hover:translate-x-1 transition-all sm:ml-auto">
                     Read More
                     <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>

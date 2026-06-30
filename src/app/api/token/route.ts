@@ -21,9 +21,7 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3001',
     'http://localhost:3004',
     'https://bankkaro.com',
-    'https://bankexpert.bankkaro.com',
-    'https://shubham-bank-expert.vercel.app',
-    'https://shubham-bank-expert-bankkaroproducts-projects.vercel.app',
+    'https://moneycontrol-expert.vercel.app',
 ].filter(Boolean) as string[];
 
 export async function POST(request: NextRequest) {
