@@ -118,7 +118,7 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
   const status = getCardStatus(card);
 
   const statusConfig: Record<string, { label: string; bg: string; text: string }> = {
-    lifetime_free: { label: "LTF", bg: "bg-[#5BA42B]", text: "text-white" },
+    lifetime_free: { label: "LTF", bg: "bg-[#52B974]", text: "text-white" },
     invite_only: { label: "Invite Only", bg: "bg-[#F59E0B]", text: "text-white" },
     discontinued: { label: "Discontinued", bg: "bg-[#EF4444]", text: "text-white" },
   };
@@ -256,7 +256,7 @@ const TOOLS = [
     description: "Find a better card than the one you already have",
     to: "/beat-my-card",
     onTrack: () => trackHomepageBeatMyCardClicked("Beat My Card", "tools_section"),
-    gradient: "from-[#5BA42B] to-[#3d7a1a]",
+    gradient: "from-[#52B974] to-[#3d7a1a]",
   },
   {
     icon: LayoutGrid,
@@ -417,7 +417,7 @@ function ToolsSection() {
     <section ref={sectionRef} className="py-16 md:py-24 bg-white">
       <div className="max-w-[1200px] mx-auto px-5 md:px-8">
         <div className="text-center mb-12">
-          <span className="inline-block font-lato text-[11px] font-bold tracking-[0.2em] uppercase text-[#5BA42B] mb-2">
+          <span className="inline-block font-lato text-[11px] font-bold tracking-[0.2em] uppercase text-[#52B974] mb-2">
             AI-Powered Tools
           </span>
           <h2 className="font-montserrat text-2xl md:text-[2rem] font-bold text-[#1a1a2e] tracking-tight">
@@ -491,8 +491,8 @@ const HomeLanding = () => {
                 <stop offset="100%" stopColor="#1A6DA4" stopOpacity="0" />
               </linearGradient>
               <linearGradient id="hero-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#5BA42B" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#5BA42B" stopOpacity="0" />
+                <stop offset="0%" stopColor="#52B974" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="#52B974" stopOpacity="0" />
               </linearGradient>
             </defs>
             {/* Large angled plane top-right */}
@@ -509,25 +509,25 @@ const HomeLanding = () => {
               ))
             )}
             {/* Diamond shape bottom-left */}
-            <polygon points="120,500 180,440 240,500 180,560" fill="none" stroke="#5BA42B" strokeWidth="1" opacity="0.1" />
+            <polygon points="120,500 180,440 240,500 180,560" fill="none" stroke="#52B974" strokeWidth="1" opacity="0.1" />
             {/* Accent line */}
             <line x1="60%" y1="0" x2="40%" y2="100%" stroke="#1A6DA4" strokeWidth="0.5" opacity="0.06" />
-            <line x1="62%" y1="0" x2="42%" y2="100%" stroke="#5BA42B" strokeWidth="0.5" opacity="0.04" />
+            <line x1="62%" y1="0" x2="42%" y2="100%" stroke="#52B974" strokeWidth="0.5" opacity="0.04" />
           </svg>
 
           {/* Radial glows */}
           <div className="absolute top-[-20%] left-[50%] -translate-x-1/2 w-[60vw] h-[60vw] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, #1A6DA4, transparent 60%)" }} />
-          <div className="absolute bottom-[-30%] right-[-10%] w-[35vw] h-[35vw] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #5BA42B, transparent 60%)" }} />
+          <div className="absolute bottom-[-30%] right-[-10%] w-[35vw] h-[35vw] rounded-full opacity-[0.05]" style={{ background: "radial-gradient(circle, #52B974, transparent 60%)" }} />
 
           <div className="relative z-10 max-w-[800px] mx-auto px-5 md:px-8 text-center py-16 md:py-24">
-            <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#5BA42B] mb-6 px-4 py-1.5 bg-[#5BA42B]/[0.1] border border-[#5BA42B]/20" style={{ borderRadius: "100px" }}>
+            <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#52B974] mb-6 px-4 py-1.5 bg-[#52B974]/[0.1] border border-[#52B974]/20" style={{ borderRadius: "100px" }}>
               India's Trusted Card Advisor
             </span>
 
             <h1 className="font-montserrat text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold text-white leading-[1.08] tracking-tight mb-5">
               Smart Credit Card
               <br />
-              <span className="text-[#5BA42B]">Decisions,</span>{" "}
+              <span className="text-[#52B974]">Decisions,</span>{" "}
               <span className="text-white/50 font-light">Made Simple</span>
             </h1>
 
@@ -613,7 +613,7 @@ const HomeLanding = () => {
               <span className="text-[#ccc]">|</span>
               <Link
                 to="/card-genius"
-                className="flex items-center gap-2 font-lato text-xs font-bold text-[#5BA42B] hover:text-[#4a8c22] transition-colors whitespace-nowrap"
+                className="flex items-center gap-2 font-lato text-xs font-bold text-[#52B974] hover:text-[#4a8c22] transition-colors whitespace-nowrap"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 AI Card Genius

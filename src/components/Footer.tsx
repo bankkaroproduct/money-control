@@ -88,7 +88,7 @@ const Footer = () => {
           <div>
             <h4 className="font-lato text-[11px] font-bold tracking-[0.15em] uppercase text-white/40 mb-4">Contact</h4>
             <p className="font-roboto text-sm text-white/50 mb-2">Have questions?</p>
-            <a href={`mailto:${brandConfig.email}`} className="font-lato text-sm font-bold text-[#1A6DA4] hover:text-[#5BA42B] transition-colors" onClick={() => trackFooterEmailClicked(brandConfig.email)}>
+            <a href={`mailto:${brandConfig.email}`} className="font-lato text-sm font-bold text-[#1A6DA4] hover:text-[#52B974] transition-colors" onClick={() => trackFooterEmailClicked(brandConfig.email)}>
               {brandConfig.email}
             </a>
           </div>

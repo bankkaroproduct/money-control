@@ -41,19 +41,18 @@ export const cardService = {
   },
 
   async getCardDetails(alias: string) {
-    const response = await authManager.makeAuthenticatedRequest(
-      `${BASE_URL}/cardgenius/cards/${alias}`,
-      { method: 'GET' }
-    );
-    return response.json();
+    const allCards = await this.getPartnerCards();
+    if (allCards.status === 'success' && Array.isArray(allCards.data)) {
+      const match = allCards.data.find(
+        (c: any) => (c.seo_card_alias || c.card_alias) === alias
+      );
+      return { status: 'success', data: match || null };
+    }
+    return allCards;
   },
 
   async getCardDetailsByAlias(alias: string) {
-    const response = await authManager.makeAuthenticatedRequest(
-      `${BASE_URL}/cardgenius/cards/${alias}`,
-      { method: 'GET' }
-    );
-    return response.json();
+    return this.getCardDetails(alias);
   },
 
   async getPartnerCards(signal?: AbortSignal) {

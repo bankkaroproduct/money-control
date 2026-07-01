@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { CreditCard, Gift, Plane, BadgePercent, FileText, Landmark, TrendingUp } from "lucide-react";
 import { trackAboutPageView, trackAboutSubscribeSectionViewed, trackAboutSubscribeClicked } from "@/services/journeyTrack";
+import { brandConfig } from "@/config/brand.config";
 
 function useCountUp(target: number, duration = 1800) {
   const [value, setValue] = useState(0);
@@ -76,7 +77,7 @@ const About = () => {
       <section className="pt-28 pb-16 bg-white">
         <div className="container max-w-2xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center mx-auto mb-6">
-            <img src="/moneycontrol-logo.svg" alt="Moneycontrol" className="h-12 w-auto" />
+            <img src={brandConfig.logo} alt={brandConfig.name} className="h-12 w-auto" />
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#1A6DA4] mb-2">Moneycontrol Credit Cards</h1>
           <p className="text-base font-semibold text-gray-500 mb-5">India's Trusted Financial Platform</p>

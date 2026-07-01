@@ -260,17 +260,6 @@ export const redirectToCardApplication = async (card: any, overrides: Partial<Re
 
   const url = cleanUrl(rawUrl);
 
-  console.log('FINAL REDIRECT URL:', cleanUrl(rawUrl));
-
-  console.log('REDIRECT URL FOR CARD:', {
-    cardName: card.name || card.card_name,
-    network_url: card.network_url,
-    cg_network_url: card.cg_network_url,
-    ck_store_url: card.ck_store_url,
-    network_url_2: card.network_url_2,
-    finalUrl: url,
-  });
-
   if (
     !url ||
     url.trim() === '' ||

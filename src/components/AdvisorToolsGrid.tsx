@@ -63,7 +63,7 @@ const AdvisorToolsGrid = () => {
     <section ref={sectionRef} className="py-20 md:py-28" style={{ backgroundColor: "#0e2230" }}>
       <div className="max-w-[1180px] mx-auto px-6 md:px-10">
         <div className="border-t border-white/[0.12] pt-12 mb-14">
-          <span className="font-lato text-[11px] font-bold tracking-[0.22em] uppercase text-[#5BA42B] block mb-3">
+          <span className="font-lato text-[11px] font-bold tracking-[0.22em] uppercase text-[#52B974] block mb-3">
             Moneycontrol Toolkit
           </span>
           <h2 className="font-montserrat text-[clamp(1.6rem,3.4vw,2.4rem)] font-bold text-white tracking-tight leading-[1.06]">
@@ -87,7 +87,7 @@ const AdvisorToolsGrid = () => {
                   className="inline-flex items-center justify-center h-11 w-11 border border-white/[0.16]"
                   style={{ borderRadius: "2px" }}
                 >
-                  <tool.icon className="h-5 w-5 text-[#5BA42B]" />
+                  <tool.icon className="h-5 w-5 text-[#52B974]" />
                 </div>
                 <span className="font-lato text-[11px] font-bold tracking-[0.18em] text-white/20">
                   {tool.number}
@@ -102,7 +102,7 @@ const AdvisorToolsGrid = () => {
                 {tool.description}
               </p>
 
-              <span className="inline-flex items-center gap-2 font-lato text-xs font-bold tracking-[0.08em] uppercase text-[#1A6DA4] group-hover:text-[#5BA42B] transition-colors">
+              <span className="inline-flex items-center gap-2 font-lato text-xs font-bold tracking-[0.08em] uppercase text-[#1A6DA4] group-hover:text-[#52B974] transition-colors">
                 Try Now
                 <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-200" />
               </span>

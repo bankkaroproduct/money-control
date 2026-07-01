@@ -32,7 +32,7 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
     --primary-glow: 204 72% 50%;
 
-    /* Secondary (Moneycontrol Green #5BA42B) */
+    /* Secondary (Moneycontrol Green #52B974) */
     --secondary: 97 58% 95%;
     --secondary-foreground: 97 58% 25%;
     
@@ -818,7 +818,7 @@ All colors MUST be HSL.
 /* ============================================
    Moneycontrol Brand Color Variables
    Primary Blue: #1A6DA4  →  HSL 204 72% 37%
-   Primary Green: #5BA42B →  HSL 97 58% 40%
+   Primary Green: #52B974 →  HSL 97 58% 40%
    UI Green: #52B974     →  HSL 145 42% 52%
    Alert Red: #E3515C    →  HSL 356 73% 60%
    ============================================ */
