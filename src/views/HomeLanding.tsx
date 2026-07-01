@@ -176,7 +176,7 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
         <Link
           to={card.alias ? `/cards/${card.alias}` : "/cards"}
           onClick={() => trackPicksCardDetailsClicked(card.alias, card.name, 'picks')}
-          className="flex items-center justify-center gap-2 w-full font-lato text-xs font-bold tracking-wide uppercase py-2.5 text-[#1A6DA4] bg-[#1A6DA4]/[0.06] hover:bg-[#1A6DA4] hover:text-white transition-all duration-200"
+          className="flex items-center justify-center gap-2 w-full font-lato text-xs font-bold tracking-wide uppercase py-3 min-h-[44px] text-[#1A6DA4] bg-[#1A6DA4]/[0.06] hover:bg-[#1A6DA4] hover:text-white transition-all duration-200"
           style={{ borderRadius: "8px" }}
         >
           View Details <ChevronRight className="h-3.5 w-3.5" />
@@ -344,7 +344,7 @@ function PicksSection() {
             <button
               key={key}
               onClick={() => handleTabClick(key)}
-              className={`flex-shrink-0 px-5 py-2.5 font-lato text-[13px] font-bold tracking-wide transition-all whitespace-nowrap ${
+              className={`flex-shrink-0 px-5 py-3 min-h-[44px] font-lato text-[13px] font-bold tracking-wide transition-all whitespace-nowrap ${
                 activeTab === key
                   ? "bg-[#1A6DA4] text-white shadow-md shadow-[#1A6DA4]/25"
                   : "bg-white text-[#666] hover:bg-[#eef3f8] hover:text-[#1A6DA4] border border-[#e0e4ea]"
@@ -566,7 +566,7 @@ const HomeLanding = () => {
                 {["HDFC", "SBI", "Axis", "ICICI"].map((bank) => (
                   <button
                     key={bank}
-                    className="px-3 py-1.5 font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
+                    className="px-4 py-2.5 min-h-[44px] font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
                     style={{ borderRadius: "100px" }}
                     onClick={() => {
                       setQuery(bank);

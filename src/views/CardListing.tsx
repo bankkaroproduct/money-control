@@ -1337,7 +1337,7 @@ const CardListing = () => {
                           <p className="text-[11px] text-muted-foreground mb-1">Joining</p>
                           <p className="font-semibold">{feeCalc(card.joining_fee_text).display}</p>
                           {feeCalc(card.joining_fee_text).tooltip && (
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg pointer-events-none">
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 max-w-[200px] whitespace-normal text-center shadow-lg pointer-events-none">
                               {feeCalc(card.joining_fee_text).tooltip}
                             </div>
                           )}
@@ -1346,7 +1346,7 @@ const CardListing = () => {
                           <p className="text-[11px] text-muted-foreground mb-1">Annual</p>
                           <p className="font-semibold">{feeCalc(card.annual_fee_text).display}</p>
                           {feeCalc(card.annual_fee_text).tooltip && (
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg pointer-events-none">
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 max-w-[200px] whitespace-normal text-center shadow-lg pointer-events-none">
                               {feeCalc(card.annual_fee_text).tooltip}
                             </div>
                           )}
@@ -1437,7 +1437,7 @@ const CardListing = () => {
 
     {/* Sticky Filter Button (Bottom) - Shows on scroll */}
     {showStickyFilter && (
-      <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom duration-300 px-4 w-full">
+      <div className="lg:hidden fixed bottom-4 pb-[env(safe-area-inset-bottom)] left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom duration-300 px-4 w-full">
         <div className="bg-card/95 backdrop-blur-md border border-primary/40 rounded-full shadow-2xl px-5 py-3 flex items-center justify-center gap-3">
           {/* Filters trigger */}
           <button

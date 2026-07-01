@@ -656,7 +656,7 @@ export default function CardDetails() {
         {/* Rewards & Redemption - Aligned with Design System */}
         <section ref={rewardsRef} id="rewards">
           <h2 className="text-2xl font-bold text-foreground mb-6">Rewards & Redemption</h2>
-          <div className="bg-card border border-border rounded-xl p-8">
+          <div className="bg-card border border-border rounded-xl p-4 sm:p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-sm">
                 <Gift className="w-7 h-7 text-primary-foreground" />
@@ -722,11 +722,11 @@ export default function CardDetails() {
         {card.bank_fee_structure && (
           <section ref={feeStructureRef} id="fee-structure">
             <h2 className="text-2xl font-bold text-foreground mb-6">Fee Structure</h2>
-            <div className="bg-card border border-border rounded-xl p-8">
+            <div className="bg-card border border-border rounded-xl p-4 sm:p-6 lg:p-8">
               <Accordion type="single" collapsible>
                 <AccordionItem value="forex">
-                  <AccordionTrigger className="px-6">Foreign Currency Markup</AccordionTrigger>
-                  <AccordionContent className="px-6">
+                  <AccordionTrigger className="px-3 sm:px-6">Foreign Currency Markup</AccordionTrigger>
+                  <AccordionContent className="px-3 sm:px-6">
                     <p className="font-semibold mb-2">{card.bank_fee_structure.forex_markup}</p>
                     {card.bank_fee_structure.forex_markup_comment && (
                       <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(card.bank_fee_structure.forex_markup_comment) }} className="prose prose-sm max-w-none text-muted-foreground" />
@@ -735,8 +735,8 @@ export default function CardDetails() {
                 </AccordionItem>
                 {card.bank_fee_structure.apr_fees && (
                   <AccordionItem value="apr">
-                    <AccordionTrigger className="px-6">APR Fees</AccordionTrigger>
-                    <AccordionContent className="px-6">
+                    <AccordionTrigger className="px-3 sm:px-6">APR Fees</AccordionTrigger>
+                    <AccordionContent className="px-3 sm:px-6">
                       <p className="font-semibold mb-2">{card.bank_fee_structure.apr_fees}</p>
                       {card.bank_fee_structure.apr_fees_comment && (
                         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(card.bank_fee_structure.apr_fees_comment) }} className="prose prose-sm max-w-none text-muted-foreground" />
@@ -745,8 +745,8 @@ export default function CardDetails() {
                   </AccordionItem>
                 )}
                 <AccordionItem value="late">
-                  <AccordionTrigger className="px-6">Late Payment Charges</AccordionTrigger>
-                  <AccordionContent className="px-6 space-y-2">
+                  <AccordionTrigger className="px-3 sm:px-6">Late Payment Charges</AccordionTrigger>
+                  <AccordionContent className="px-3 sm:px-6 space-y-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="font-semibold mb-2">Amount Range</p>
