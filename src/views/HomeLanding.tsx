@@ -134,7 +134,7 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
         <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
