@@ -129,12 +129,12 @@ function CardTile({ card, index }: { card: CardItem; index: number }) {
       style={{ borderRadius: "12px" }}
       onClick={() => trackPicksCardClicked(card.alias, card.name, card.bank, 'picks')}
     >
-      <div className="relative h-44 bg-gradient-to-br from-[#f0f4f8] to-[#e8edf3] flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-[16/10] bg-gradient-to-br from-[#f0f4f8] to-[#e8edf3] flex items-center justify-center overflow-hidden">
         <img
           src={card.image}
           alt={card.name}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
         <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
