@@ -33,9 +33,12 @@ export const metadata: Metadata = {
     title: `${brandConfig.name} - ${brandConfig.tagline}`,
     description: brandConfig.tagline,
     icons: {
-        icon: brandConfig.favicon,
-        shortcut: brandConfig.favicon,
-        apple: brandConfig.favicon,
+        icon: [
+            { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+            { url: brandConfig.favicon, sizes: '128x128', type: 'image/png' },
+        ],
+        shortcut: '/favicon-32.png',
+        apple: '/favicon-192.png',
     },
 };
 
