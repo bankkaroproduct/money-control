@@ -469,7 +469,7 @@ const HomeLanding = () => {
 
   const handleSearch = () => {
     trackSearchSubmitted(query.trim());
-    router.push(query.trim() ? `/cards?q=${encodeURIComponent(query.trim())}` : "/cards");
+    window.location.href = query.trim() ? `/cards?q=${encodeURIComponent(query.trim())}` : "/cards";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -564,18 +564,18 @@ const HomeLanding = () => {
 
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 {["HDFC", "SBI", "Axis", "ICICI"].map((bank) => (
-                  <button
+                  <a
                     key={bank}
-                    className="px-4 py-2.5 min-h-[44px] font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
+                    href={`/cards?q=${encodeURIComponent(bank)}`}
+                    className="px-4 py-2.5 min-h-[44px] font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all inline-flex items-center"
                     style={{ borderRadius: "100px" }}
                     onClick={() => {
                       trackSearchQueryTyped(bank);
                       trackSearchSubmitted(bank);
-                      router.push(`/cards?q=${encodeURIComponent(bank)}`);
                     }}
                   >
                     {bank}
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
