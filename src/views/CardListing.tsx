@@ -115,7 +115,8 @@ const CardListing = () => {
   const pathname = usePathname();
   const [cards, setCards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+  const urlQ = searchParams.get("q") ?? "";
+  const [searchQuery, setSearchQuery] = useState(urlQ);
   const [displayCount, setDisplayCount] = useState(12);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
@@ -516,9 +517,11 @@ const CardListing = () => {
       if (prev.category === urlCategory) return prev;
       return { ...prev, category: urlCategory };
     });
-    const urlQuery = searchParams.get('q') ?? '';
-    setSearchQuery(urlQuery);
   }, [searchParams]);
+
+  useEffect(() => {
+    setSearchQuery(urlQ);
+  }, [urlQ]);
   const clearFilters = () => {
     trackFiltersCleared();
     trackListingClearAllFilters();
