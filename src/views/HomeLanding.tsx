@@ -569,8 +569,9 @@ const HomeLanding = () => {
                     className="px-4 py-2.5 min-h-[44px] font-roboto text-xs text-white/50 border border-white/10 hover:border-white/30 hover:text-white/80 transition-all"
                     style={{ borderRadius: "100px" }}
                     onClick={() => {
-                      setQuery(bank);
                       trackSearchQueryTyped(bank);
+                      trackSearchSubmitted(bank);
+                      router.push(`/cards?q=${encodeURIComponent(bank)}`);
                     }}
                   >
                     {bank}

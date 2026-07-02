@@ -513,9 +513,11 @@ const CardListing = () => {
   useEffect(() => {
     const urlCategory = normalizeCategory(searchParams.get('category'));
     setFilters(prev => {
-      if (prev.category === urlCategory) return prev; // no change
+      if (prev.category === urlCategory) return prev;
       return { ...prev, category: urlCategory };
     });
+    const urlQuery = searchParams.get('q') ?? '';
+    setSearchQuery(urlQuery);
   }, [searchParams]);
   const clearFilters = () => {
     trackFiltersCleared();
