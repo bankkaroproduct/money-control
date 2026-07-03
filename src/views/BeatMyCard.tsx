@@ -843,8 +843,8 @@ const BeatMyCard = () => {
       },
       {
         icon: <Zap className="w-5 h-5 text-primary" />,
-        title: 'Instant Approval',
-        subtitle: 'Decision in 60 seconds'
+        title: 'Quick Application',
+        subtitle: 'Apply directly with the bank'
       },
       {
         icon: <CheckCircle2 className="w-5 h-5 text-primary" />,

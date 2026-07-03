@@ -902,9 +902,9 @@ export default function CardDetails() {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl -z-10" />
 
           <div className="text-center mb-6 sm:mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary mb-2">Fast Approval</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary mb-2">How It Works</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Ready to Get Started?</h2>
-            <p className="text-sm sm:text-base text-muted-foreground">Apply now and get instant decision in 60 seconds</p>
+            <p className="text-sm sm:text-base text-muted-foreground">Apply directly on the bank's website</p>
           </div>
 
           <div className="grid gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 max-w-4xl mx-auto md:grid-cols-3">
