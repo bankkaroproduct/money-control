@@ -284,7 +284,12 @@ export default function CardDetails() {
   const jf = feeCalc(card.joining_fee_text);
   const af = feeCalc(card.annual_fee_text);
 
-  const sortedUSPs = [...(card.product_usps || [])].sort((a, b) => a.priority - b.priority);
+  // Each benefit is authored once per relevant category tag (tag_id 2/5/6/7/etc.) plus a
+  // generic tag_id 0 copy of the same thing. Default view shows only the generic (tag_id 0)
+  // set, sorted by priority — category-specific copy is only relevant if the visitor arrived
+  // via that category's filter, which isn't wired up yet (tracked separately).
+  const genericUSPs = (card.product_usps || []).filter((usp) => usp.tag_id === 0);
+  const sortedUSPs = [...genericUSPs].sort((a, b) => a.priority - b.priority);
   // Dedupe near-identical USP entries (same header+description modulo whitespace/tabs) —
   // the source data frequently repeats a benefit under two tag_ids.
   const seenUSPKeys = new Set<string>();
@@ -491,7 +496,7 @@ export default function CardDetails() {
                 size="lg"
                 onClick={handleApply}
               >
-                <span className="hidden xs:inline">Apply Now - Instant Decision</span>
+                <span className="hidden xs:inline">Apply Now</span>
                 <span className="xs:hidden">Apply Now</span>
                 <ExternalLink className="ml-1.5 sm:ml-2 w-4 h-4" />
               </Button>
@@ -926,8 +931,8 @@ export default function CardDetails() {
                 3
               </div>
               <div className="text-left md:text-center">
-                <p className="font-semibold text-foreground mb-1 text-base sm:text-lg">Get Instant Decision</p>
-                <p className="text-sm text-muted-foreground">Approval in 60 seconds</p>
+                <p className="font-semibold text-foreground mb-1 text-base sm:text-lg">Bank Reviews Application</p>
+                <p className="text-sm text-muted-foreground">You'll hear back from the bank directly</p>
               </div>
             </div>
           </div>
@@ -938,7 +943,7 @@ export default function CardDetails() {
               </Button>
             ) : (
               <Button size="lg" onClick={handleApply} className="w-full sm:w-auto px-8 shadow-lg hover:shadow-xl transition-all touch-target">
-                Apply Now - Get Instant Decision
+                Apply Now
                 <ExternalLink className="ml-2 w-5 h-5" />
               </Button>
             )}

@@ -444,14 +444,16 @@ const CardListing = () => {
       return cardName.includes(query) || bankName.includes(query) || cardType.includes(query) || benefits.includes(query);
     });
 
-    // 2) Filter out cards with zero savings when a category is active and savings data is loaded
+    // 2) Filter by category tag — each card carries a tags[] array with a seo_alias
+    // that matches categoryToSlug. The backend's own `slug` query param is a no-op
+    // (confirmed: identical response for slug='' and slug='best-fuel-credit-card'),
+    // so category filtering has to happen client-side against this field.
     if (filters.category !== 'all') {
-      const categorySavings = cardSavings[filters.category];
-      if (categorySavings && Object.keys(categorySavings).length > 0) {
+      const wantedSlug = categoryToSlug[filters.category];
+      if (wantedSlug) {
         base = base.filter(card => {
-          const cardKey = getCardKey(card);
-          const saving = categorySavings[String(card.id)] ?? categorySavings[cardKey] ?? 0;
-          return saving > 0;
+          const tags = Array.isArray(card.tags) ? card.tags : [];
+          return tags.some((t: any) => t?.seo_alias === wantedSlug);
         });
       }
     }
@@ -1261,9 +1263,13 @@ const CardListing = () => {
                         <CompareToggleIcon card={card} />
                       </div>
 
-                      {/* Savings Badge */}
+                      {/* Savings Badge — only once the user has actually entered spend data via
+                          Card Genius for this category. Before that, cardSavings[category] is
+                          empty and there's nothing real to show; defaulting to "₹0 Savings" here
+                          previously implied every card saves you nothing, which isn't true. */}
                       {filters.category !== 'all' && (() => {
-                        const categorySavings = cardSavings[filters.category] || {};
+                        const categorySavings = cardSavings[filters.category];
+                        if (!categorySavings || Object.keys(categorySavings).length === 0) return null;
                         const cardKey = getCardKey(card);
                         const saving = categorySavings[String(card.id)] ?? categorySavings[cardKey] ?? 0;
                         if (saving === 0) {
