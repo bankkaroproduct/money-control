@@ -4,7 +4,7 @@ import CardListing from "@/views/CardListing";
 
 export const metadata: Metadata = {
   robots: 'noindex, follow',
-  alternates: { canonical: 'https://great.cards/credit-card-store' },
+  alternates: { canonical: process.env.NEXT_PUBLIC_APP_URL || "https://money-control-beryl.vercel.app" },
 };
 
 export default function CardsPage() {

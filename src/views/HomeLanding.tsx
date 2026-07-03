@@ -421,10 +421,10 @@ function ToolsSection() {
             AI-Powered Tools
           </span>
           <h2 className="font-montserrat text-2xl md:text-[2rem] font-bold text-[#1a1a2e] tracking-tight">
-            Find Your Perfect Card
+            Three Ways to Find Your Card
           </h2>
           <p className="font-roboto text-[15px] text-[#888] mt-2 max-w-md mx-auto">
-            Use our intelligent tools to discover, compare, and upgrade your credit cards.
+            Answer a few questions, check a spending category, or see if your current card is still worth it.
           </p>
         </div>
 
@@ -521,18 +521,18 @@ const HomeLanding = () => {
 
           <div className="relative z-10 max-w-[800px] mx-auto px-5 md:px-8 text-center py-16 md:py-24">
             <span className="inline-block font-lato text-[11px] font-bold tracking-[0.25em] uppercase text-[#52B974] mb-6 px-4 py-1.5 bg-[#52B974]/[0.1] border border-[#52B974]/20" style={{ borderRadius: "100px" }}>
-              India's Trusted Card Advisor
+              Unbiased Card Comparisons
             </span>
 
             <h1 className="font-montserrat text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold text-white leading-[1.08] tracking-tight mb-5">
-              Smart Credit Card
+              Find the Credit Card
               <br />
-              <span className="text-[#52B974]">Decisions,</span>{" "}
-              <span className="text-white/50 font-light">Made Simple</span>
+              <span className="text-[#52B974]">That Actually Fits</span>{" "}
+              <span className="text-white/50 font-light">Your Spending</span>
             </h1>
 
             <p className="font-roboto text-base md:text-lg text-white/50 leading-[1.7] max-w-[52ch] mx-auto mb-10">
-              Data-driven recommendations across 130+ cards from 20+ banks. No bias. No spam. Just the cards that work for you.
+              Compare fees, rewards, and eligibility across 130+ cards from 20+ banks — ranked by what you'd actually save.
             </p>
 
             {/* Search bar */}

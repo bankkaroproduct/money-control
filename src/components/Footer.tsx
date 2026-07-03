@@ -35,7 +35,7 @@ const Footer = () => {
   }, []);
 
   const quickLinks = useMemo(() => [
-    { label: "Home", to: "/" },
+    { label: "Home", to: "/home" },
     { label: "Discover Cards", to: "/cards" },
     { label: "AI Card Genius", to: "/card-genius" },
     { label: "Category Card Genius", to: "/card-genius-category" },

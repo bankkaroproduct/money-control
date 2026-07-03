@@ -285,7 +285,16 @@ export default function CardDetails() {
   const af = feeCalc(card.annual_fee_text);
 
   const sortedUSPs = [...(card.product_usps || [])].sort((a, b) => a.priority - b.priority);
-  const topUSPs = sortedUSPs.slice(0, 4);
+  // Dedupe near-identical USP entries (same header+description modulo whitespace/tabs) —
+  // the source data frequently repeats a benefit under two tag_ids.
+  const seenUSPKeys = new Set<string>();
+  const dedupedUSPs = sortedUSPs.filter((usp) => {
+    const key = `${usp.header}|${usp.description}`.toLowerCase().replace(/\s+/g, ' ').trim();
+    if (seenUSPKeys.has(key)) return false;
+    seenUSPKeys.add(key);
+    return true;
+  });
+  const topUSPs = dedupedUSPs.slice(0, 4);
 
   // Group benefits by type for horizontal scroll - exclude "All Benefits" and "all" variations
   const benefitTypes = card.product_benefits
@@ -527,7 +536,7 @@ export default function CardDetails() {
                 { id: 'benefits', label: 'Benefits', ref: benefitsRef },
                 { id: 'rewards', label: 'Rewards', ref: rewardsRef },
                 ...(card?.bank_fee_structure ? [{ id: 'fee-structure', label: 'Fee Structure', ref: feeStructureRef }] : []),
-                ...(sortedUSPs.length > 2 ? [{ id: 'all-benefits', label: 'All Benefits', ref: allBenefitsRef }] : []),
+                ...(dedupedUSPs.length > 2 ? [{ id: 'all-benefits', label: 'All Benefits', ref: allBenefitsRef }] : []),
                 ...(card?.tnc ? [{ id: 'tnc', label: 'T&Cs', ref: tncRef }] : [])
               ].map((section) => (
                 <button
@@ -612,11 +621,11 @@ export default function CardDetails() {
         </div>
 
         {/* All Benefits - Improved layout */}
-        {sortedUSPs.length > 2 && (
+        {dedupedUSPs.length > 2 && (
           <section className="animate-fade-in" ref={benefitsRef} id="benefits">
             <h2 className="text-2xl font-bold text-foreground mb-6">Key Benefits</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              {sortedUSPs.slice(2).map((usp, index) => (
+              {dedupedUSPs.slice(2).map((usp, index) => (
                 <div
                   key={index}
                   className="bg-card border border-border rounded-lg p-5 hover:border-primary/50 transition-all duration-200"

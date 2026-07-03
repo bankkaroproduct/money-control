@@ -113,7 +113,7 @@ const MobileMenuOverlay = ({
           </div>
 
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-1">
-            <Link to="/" className="block px-3 py-3 font-lato text-[15px] font-bold text-[#1a1a2e] hover:bg-[#f5f7fa] rounded-lg transition-all" onClick={() => { trackNavHomeClicked('home'); onClose(); }}>Home</Link>
+            <Link to="/home" className="block px-3 py-3 font-lato text-[15px] font-bold text-[#1a1a2e] hover:bg-[#f5f7fa] rounded-lg transition-all" onClick={() => { trackNavHomeClicked('home'); onClose(); }}>Home</Link>
             <Link to="/cards" className="block px-3 py-3 font-lato text-[15px] font-bold text-[#1a1a2e] hover:bg-[#f5f7fa] rounded-lg transition-all" onClick={() => { trackNavDiscoverClicked('discover'); onClose(); }}>Discover</Link>
 
             <div className="pt-3" onMouseEnter={() => trackNavToolsDropdownOpened()}>
@@ -170,7 +170,7 @@ const Navigation = () => {
   }, [isMobileMenuOpen]);
 
   const navLinks: MobileNavItem[] = useMemo(() => ([
-    { label: 'Home', to: '/', action: () => { analytics.trackMenuClick('Home'); trackNavHomeClicked('home'); } },
+    { label: 'Home', to: '/home', action: () => { analytics.trackMenuClick('Home'); trackNavHomeClicked('home'); } },
     { label: 'Discover', to: '/cards', action: () => { analytics.trackMenuClick('Discover'); trackNavDiscoverClicked('discover'); } },
     { label: 'About', to: '/about', action: () => { analytics.trackMenuClick('About'); trackNavAboutClicked('about'); } },
   ]), []);
