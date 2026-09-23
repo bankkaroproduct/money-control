@@ -596,7 +596,7 @@ const CardGenius = () => {
       const bankLabel = selectedCard.bank_name || "";
       const totalLoungeValue = Number(selectedCard.airport_lounge_value || 0);
       const milestoneValue = Number(selectedCard.milestone_benefits_only || 0);
-      const joiningFeeValue = feeCalc(selectedCard.joining_fee_text).withGST;
+      const annualFeeValue = feeCalc(selectedCard.annual_fee_text).withGST;
       return <div className="min-h-screen bg-slate-50">
         <Navigation />
         <main className="section-shell mx-auto pt-24 pb-16 max-w-4xl space-y-6">
@@ -649,9 +649,9 @@ const CardGenius = () => {
                 <p className="text-xl font-semibold text-foreground">{milestoneValue > 0 ? `₹${milestoneValue.toLocaleString()}` : '—'}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Joining Fees</p>
-                <p className={`text-xl font-semibold ${joiningFeeValue > 0 ? 'text-red-500' : 'text-foreground'}`}>
-                  {joiningFeeValue > 0 ? `-₹${joiningFeeValue.toLocaleString()}` : '₹0'}
+                <p className="text-xs text-muted-foreground mb-1">Annual Fee</p>
+                <p className={`text-xl font-semibold ${annualFeeValue > 0 ? 'text-red-500' : 'text-foreground'}`}>
+                  {annualFeeValue > 0 ? `-₹${annualFeeValue.toLocaleString()}` : 'Free'}
                 </p>
               </div>
             </div>
@@ -1054,13 +1054,13 @@ const CardGenius = () => {
                       </p>
                     </div>
                     <div className="bg-muted/40 rounded-xl p-3 relative group cursor-default">
-                      <p className="text-xs text-muted-foreground">Joining Fee</p>
+                      <p className="text-xs text-muted-foreground">Annual Fee</p>
                       <p className="text-base font-semibold text-red-600">
-                        {feeCalc(card.joining_fee_text).display}
+                        {feeCalc(card.annual_fee_text).display}
                       </p>
-                      {feeCalc(card.joining_fee_text).tooltip && (
+                      {feeCalc(card.annual_fee_text).tooltip && (
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg pointer-events-none">
-                          {feeCalc(card.joining_fee_text).tooltip}
+                          {feeCalc(card.annual_fee_text).tooltip}
                         </div>
                       )}
                     </div>
@@ -1190,13 +1190,13 @@ const CardGenius = () => {
                           </th>
                           <th className="text-center p-3 font-semibold text-xs sm:text-sm text-foreground min-w-[110px] sm:min-w-[120px]">
                             <div className="flex items-center justify-center gap-1">
-                              Joining Fee
+                              Annual Fee
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-xs">
-                                  <p>Annual or one-time fees charged by the bank for this credit card</p>
+                                  <p>Annual fee charged by the bank for this credit card</p>
                                 </TooltipContent>
                               </Tooltip>
                             </div>
@@ -1212,7 +1212,7 @@ const CardGenius = () => {
                                   <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-xs">
-                                  <p>Your actual profit calculated as: Total Savings + Milestones + Airport Lounges - Joining Fees</p>
+                                  <p>Your actual profit calculated as: Total Savings + Milestones + Airport Lounges - Joining & Annual Fees</p>
                                 </TooltipContent>
                               </Tooltip>
                             </div>
@@ -1410,13 +1410,13 @@ const CardGenius = () => {
                           </th>
                           <th className="text-center p-4 font-semibold text-sm text-foreground w-36">
                             <div className="flex items-center justify-center gap-1">
-                              Joining Fee
+                              Annual Fee
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-xs">
-                                  <p>Annual or one-time fees charged by the bank for this credit card</p>
+                                  <p>Annual fee charged by the bank for this credit card</p>
                                 </TooltipContent>
                               </Tooltip>
                             </div>
@@ -1432,7 +1432,7 @@ const CardGenius = () => {
                                   <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-xs">
-                                  <p>Your actual profit calculated as: Total Savings + Milestones + Airport Lounges - Joining Fees</p>
+                                  <p>Your actual profit calculated as: Total Savings + Milestones + Airport Lounges - Joining & Annual Fees</p>
                                 </TooltipContent>
                               </Tooltip>
                             </div>
@@ -1480,10 +1480,10 @@ const CardGenius = () => {
                             </td>
                             <td className="p-4"></td>
                             <td className="p-4 text-center font-semibold text-red-600 relative group cursor-default">
-                              {feeCalc(card.joining_fee_text).display}
-                              {feeCalc(card.joining_fee_text).tooltip && (
+                              {feeCalc(card.annual_fee_text).display}
+                              {feeCalc(card.annual_fee_text).tooltip && (
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg pointer-events-none">
-                                  {feeCalc(card.joining_fee_text).tooltip}
+                                  {feeCalc(card.annual_fee_text).tooltip}
                                 </div>
                               )}
                             </td>
@@ -1540,10 +1540,10 @@ const CardGenius = () => {
                             </td>
                             <td className="p-4"></td>
                             <td className="p-4 text-center font-semibold text-red-600 relative group cursor-default">
-                              {feeCalc(card.joining_fee_text).display}
-                              {feeCalc(card.joining_fee_text).tooltip && (
+                              {feeCalc(card.annual_fee_text).display}
+                              {feeCalc(card.annual_fee_text).tooltip && (
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-50 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg pointer-events-none">
-                                  {feeCalc(card.joining_fee_text).tooltip}
+                                  {feeCalc(card.annual_fee_text).tooltip}
                                 </div>
                               )}
                             </td>
