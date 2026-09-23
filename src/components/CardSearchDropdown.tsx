@@ -84,7 +84,7 @@ export const CardSearchDropdown = ({
   }, []);
   return <div className="relative w-full" ref={dropdownRef}>
     {selectedCard ? <div className="flex items-center gap-3 p-4 bg-card border border-primary rounded-lg">
-      <img src={selectedCard.image} alt={selectedCard.name} className="w-16 h-10 object-contain" />
+      <img src={selectedCard.image} alt={selectedCard.name} className="w-16 h-10 object-cover rounded" />
       <div className="flex-1">
         <h3 className="font-semibold text-foreground">{selectedCard.name}</h3>
         <p className="text-sm text-muted-foreground">{selectedCard.banks?.name || 'Credit Card'}</p>
@@ -108,7 +108,7 @@ export const CardSearchDropdown = ({
         </div> : filteredCards.length === 0 ? <div className="p-4 text-center text-muted-foreground">
           No cards found matching "{debouncedQuery}"
         </div> : filteredCards.map((card, index) => <button key={card.id} onClick={() => handleCardSelect(card)} onMouseEnter={() => setHighlightedIndex(index)} className={`w-full flex items-center gap-4 p-4 text-left hover:bg-muted/50 transition-colors ${index === highlightedIndex ? "bg-muted/50" : ""} ${index === filteredCards.length - 1 ? "" : "border-b border-border"}`}>
-          <img src={card.image} alt={card.name} className="w-16 h-10 object-contain" />
+          <img src={card.image} alt={card.name} className="w-16 h-10 object-cover rounded" />
           <div className="flex-1">
             <h3 className="font-semibold text-foreground">{card.name}</h3>
             <p className="text-sm text-muted-foreground">{card.banks?.name || 'Credit Card'}</p>

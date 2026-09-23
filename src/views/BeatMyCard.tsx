@@ -953,11 +953,11 @@ const BeatMyCard = () => {
                         Winner Choice
                       </div>
                     )}
-                    <div className="bg-slate-50 rounded-2xl p-6 mb-5">
+                    <div className="bg-slate-50 rounded-2xl overflow-hidden mb-5">
                       <img
                         src={card.image}
                         alt={card.name}
-                        className="w-full h-48 object-contain drop-shadow-2xl"
+                        className="w-full h-48 object-cover"
                         onError={e => {
                           e.currentTarget.src = '/placeholder.svg';
                         }}

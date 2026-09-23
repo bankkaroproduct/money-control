@@ -268,7 +268,7 @@ const PopularCreditCards = () => {
                           <div key={card.id || index} className="popular-card flex-shrink-0 w-[85vw] max-w-sm snap-center bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl border border-border/50 transition-all duration-300 flex flex-col active:scale-[0.98]">
                             {/* Card Image */}
                             <div className="relative h-52 overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex-shrink-0">
-                              <img src={card.card_bg_image} alt={card.name} className="w-full h-full object-contain p-6" />
+                              <img src={card.card_bg_image} alt={card.name} className="w-full h-full object-cover" />
                             </div>
 
                             <div className="p-5 flex flex-col flex-grow space-y-4">
@@ -359,7 +359,7 @@ const PopularCreditCards = () => {
                       <div key={card.id || index} className="popular-card bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
                         {/* Card Image */}
                         <div className="relative h-64 overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex-shrink-0">
-                          <img src={card.card_bg_image} alt={card.name} className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-500" />
+                          <img src={card.card_bg_image} alt={card.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
                           {/* Tags overlay */}
                           <div className="absolute top-4 left-4 flex flex-wrap gap-2">

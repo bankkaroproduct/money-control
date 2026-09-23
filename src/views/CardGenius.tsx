@@ -1026,7 +1026,7 @@ const CardGenius = () => {
                   <img
                     src={card.card_bg_image || '/placeholder.svg'}
                     alt={card.card_name}
-                    className="w-20 h-14 object-contain flex-shrink-0"
+                    className="w-20 h-14 object-cover rounded-md flex-shrink-0"
                     onError={e => { e.currentTarget.src = '/placeholder.svg'; }}
                   />
                 </div>
@@ -1446,7 +1446,7 @@ const CardGenius = () => {
                           <td className="p-3 text-center text-sm font-bold text-muted-foreground w-10">{index + 1}</td>
                           <td className="p-3 sticky left-0 bg-white z-20 min-w-[260px] shadow-[4px_0_6px_-4px_rgba(15,23,42,0.08)]">
                             <div className="flex items-center gap-4">
-                              <img src={card.card_bg_image} alt={card.card_name} className="w-16 h-12 object-contain flex-shrink-0 rounded-md border border-slate-100" onError={e => {
+                              <img src={card.card_bg_image} alt={card.card_name} className="w-16 h-12 object-cover flex-shrink-0 rounded-md border border-slate-100" onError={e => {
                                 e.currentTarget.src = "/placeholder.svg";
                               }} />
                               <div className="min-w-0">

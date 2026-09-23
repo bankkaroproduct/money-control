@@ -1314,7 +1314,7 @@ const CardListing = () => {
                         return <Badge className="absolute bottom-3 right-3 bg-[#F5F5F5] text-black z-10">{CARD_STATUS_LABEL[status]}</Badge>;
                       })()}
 
-                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="w-full h-full object-contain scale-110" onClick={() => trackCardClicked(getCardAlias(card) || card.seo_card_alias, card.name, card.banks?.name, index)} onError={e => {
+                      <img src={card.card_bg_image || card.image || '/placeholder.svg'} alt={card.name} className="w-full h-full object-cover" onClick={() => trackCardClicked(getCardAlias(card) || card.seo_card_alias, card.name, card.banks?.name, index)} onError={e => {
                         e.currentTarget.src = '/placeholder.svg';
                       }} />
                     </div>

@@ -578,7 +578,7 @@ useEffect(() => {
 
             {/* Card Image */}
             <div className="relative h-64 overflow-hidden bg-gradient-to-br from-muted to-muted/50">
-              <img src={card.card_bg_image || '/placeholder.svg'} alt={card.card_name} className="w-full h-full object-contain p-8 hover:scale-105 transition-transform duration-500" onError={e => { e.currentTarget.src = '/placeholder.svg'; }} />
+              <img src={card.card_bg_image || '/placeholder.svg'} alt={card.card_name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" onError={e => { e.currentTarget.src = '/placeholder.svg'; }} />
             </div>
 
             <div className="p-6">

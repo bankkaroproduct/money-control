@@ -314,7 +314,7 @@ export function ComparePanel({ open, onOpenChange, preSelectedCard }: ComparePan
                         <img
                           src={card.image || '/placeholder.svg'}
                           alt={card.name}
-                          className="w-full h-40 object-contain rounded-lg bg-gradient-to-br from-muted to-muted/50"
+                          className="w-full h-40 object-cover rounded-lg bg-gradient-to-br from-muted to-muted/50"
                           onError={e => { e.currentTarget.src = '/placeholder.svg'; }}
                         />
                         <button
@@ -366,7 +366,7 @@ export function ComparePanel({ open, onOpenChange, preSelectedCard }: ComparePan
                                 <img
                                   src={searchCard.image || '/placeholder.svg'}
                                   alt={searchCard.name}
-                                  className="w-12 h-8 object-contain"
+                                  className="w-12 h-8 object-cover"
                                   onError={e => { e.currentTarget.src = '/placeholder.svg'; }}
                                 />
                                 <div className="flex-1">
@@ -514,7 +514,7 @@ export function ComparePanel({ open, onOpenChange, preSelectedCard }: ComparePan
                   <img
                     src={detailViewCard.image || '/placeholder.svg'}
                     alt={detailViewCard.name}
-                    className="w-full h-56 object-contain rounded-lg bg-gradient-to-br from-muted to-muted/50"
+                    className="w-full h-56 object-cover rounded-lg bg-gradient-to-br from-muted to-muted/50"
                     onError={e => { e.currentTarget.src = '/placeholder.svg'; }}
                   />
                 </div>

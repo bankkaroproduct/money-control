@@ -1,10 +1,10 @@
 ﻿"use client";
 
 import React from "react";
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { openRedirectInterstitial } from '@/utils/redirectHandler';
 import { useRouter } from 'next/navigation';
@@ -129,6 +129,37 @@ export default function EligibilityResultDialog({
     }
   };
 
+  // Auto-redirect eligible users to the bank — no second "Apply Now" click needed
+  const REDIRECT_DELAY_SECONDS = 3;
+  const [countdown, setCountdown] = useState(REDIRECT_DELAY_SECONDS);
+  const [hasRedirected, setHasRedirected] = useState(false);
+  const redirectFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      redirectFiredRef.current = false;
+      setHasRedirected(false);
+      setCountdown(REDIRECT_DELAY_SECONDS);
+      return;
+    }
+    if (!isEligible || !resolvedUrl || redirectFiredRef.current) return;
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+    const timeout = setTimeout(() => {
+      redirectFiredRef.current = true;
+      handleApply();
+      setHasRedirected(true);
+    }, REDIRECT_DELAY_SECONDS * 1000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, isEligible, resolvedUrl]);
+
   const handleViewAlternatives = () => {
     // Track analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -172,7 +203,7 @@ export default function EligibilityResultDialog({
               </DialogTitle>
             </div>
             <DialogDescription>
-              You meet the initial eligibility criteria for this card. Click Apply to proceed.
+              You meet the initial eligibility criteria for this card.
             </DialogDescription>
           </DialogHeader>
 
@@ -203,14 +234,28 @@ export default function EligibilityResultDialog({
           </div>
 
           <div className="flex flex-col gap-3">
-            <Button
-              onClick={handleApply}
-              className="w-full"
-              size="lg"
-            >
-              Apply Now
-              <ExternalLink className="ml-2 w-4 h-4" />
-            </Button>
+            {resolvedUrl && (
+              <div className="w-full rounded-lg bg-[#E0F7F9] px-4 py-3 text-center">
+                {hasRedirected ? (
+                  <p className="text-sm text-foreground">
+                    Opened {resolvedBankName} in a new tab.{' '}
+                    <button
+                      type="button"
+                      onClick={handleApply}
+                      className="font-semibold text-[#0B7A8A] underline underline-offset-2"
+                    >
+                      Didn't open? Continue
+                      <ExternalLink className="ml-1 inline w-3.5 h-3.5 align-[-2px]" />
+                    </button>
+                  </p>
+                ) : (
+                  <p className="flex items-center justify-center gap-2 text-sm font-medium text-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#0B7A8A]" />
+                    Redirecting you to {resolvedBankName} in {countdown}s…
+                  </p>
+                )}
+              </div>
+            )}
             <div className="flex gap-3">
               <Button
                 variant="outline"
